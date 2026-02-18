@@ -1,4 +1,5 @@
 
+import { Link } from 'react-router-dom'
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
 import { Button } from './Button'
 import { cn } from '@/lib/utils'
@@ -14,7 +15,7 @@ export function Header({ className }: HeaderProps) {
       className
     )}>
       <div className="container flex h-16 max-w-7xl items-center justify-between px-4 mx-auto">
-        <div className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition">
           <svg
             className="w-8 h-8"
             viewBox="0 0 24 24"
@@ -27,17 +28,17 @@ export function Header({ className }: HeaderProps) {
             <path d="M12 2v20M2 12h20M7 7h10M7 10h10M7 13h10M7 16h10" />
           </svg>
           <span className="text-xl font-bold">Istolo</span>
-        </div>
+        </Link>
         
         <nav className="hidden md:flex items-center gap-8">
+          <Link to="/" className="text-sm font-medium hover:text-primary transition">
+            Home
+          </Link>
+          <Link to="/shop" className="text-sm font-medium hover:text-primary transition">
+            Shop
+          </Link>
           <a href="#features" className="text-sm font-medium hover:text-primary transition">
             Features
-          </a>
-          <a href="#products" className="text-sm font-medium hover:text-primary transition">
-            Products
-          </a>
-          <a href="#pricing" className="text-sm font-medium hover:text-primary transition">
-            Pricing
           </a>
           <a href="#about" className="text-sm font-medium hover:text-primary transition">
             About
@@ -46,9 +47,11 @@ export function Header({ className }: HeaderProps) {
 
         <div className="flex items-center gap-4">
           <WalletMultiButton />
-          <Button variant="default" size="sm">
-            Get Started
-          </Button>
+          <Link to="/shop">
+            <Button variant="default" size="sm">
+              Shop Now
+            </Button>
+          </Link>
         </div>
       </div>
     </header>

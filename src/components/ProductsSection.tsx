@@ -1,4 +1,5 @@
 
+import { Link } from 'react-router-dom'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './Card'
 import { Button } from './Button'
 
@@ -9,7 +10,7 @@ const products = [
     description: 'Vibrant metal prints with a modern, sleek finish',
     image: 'https://images.unsplash.com/photo-1618005182384-a83a8e12a7c6?w=400&h=400&fit=crop',
     colors: ['Silver', 'Gold', 'Rose Gold'],
-    price: 'From 29 SOL',
+    price: 'From $29',
   },
   {
     id: 2,
@@ -17,7 +18,7 @@ const products = [
     description: 'Premium art prints on museum-quality paper',
     image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=400&fit=crop',
     colors: ['Matte', 'Glossy', 'Fine Art'],
-    price: 'From 15 SOL',
+    price: 'From $15',
   },
   {
     id: 3,
@@ -25,7 +26,7 @@ const products = [
     description: 'Professional canvas prints with gallery wrapping',
     image: 'https://images.unsplash.com/photo-1551886287-f40a50c58a5d?w=400&h=400&fit=crop',
     colors: ['Portrait', 'Landscape', 'Square'],
-    price: 'From 45 SOL',
+    price: 'From $45',
   },
   {
     id: 4,
@@ -33,7 +34,7 @@ const products = [
     description: 'T-shirts, hoodies, and apparel with your designs',
     image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop',
     colors: ['White', 'Black', 'Colors'],
-    price: 'From 8 SOL',
+    price: 'From $8',
   },
 ]
 
@@ -83,7 +84,9 @@ export function ProductsSection() {
                 <p className="text-lg font-semibold text-primary">
                   {product.price}
                 </p>
-                <Button className="w-full">Customize Now</Button>
+                <Link to="/shop" className="block">
+                  <Button className="w-full">Shop Now</Button>
+                </Link>
               </CardContent>
             </Card>
           ))}

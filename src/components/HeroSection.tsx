@@ -1,4 +1,5 @@
 
+import { Link } from 'react-router-dom'
 import { Button } from './Button'
 import { ArrowRight } from 'lucide-react'
 
@@ -18,9 +19,11 @@ export function HeroSection() {
               Create stunning metal and paper prints of your artwork. Built on Solana blockchain for secure, transparent payments. Your creative vision, our production excellence.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Button size="lg" className="gap-2">
-                Start Creating <ArrowRight className="w-5 h-5" />
-              </Button>
+              <Link to="/shop">
+                <Button size="lg" className="gap-2">
+                  Start Creating <ArrowRight className="w-5 h-5" />
+                </Button>
+              </Link>
               <Button variant="outline" size="lg">
                 View Gallery
               </Button>

@@ -1,4 +1,5 @@
 
+import { Link } from 'react-router-dom'
 import { Button } from './Button'
 import { ArrowRight } from 'lucide-react'
 
@@ -14,11 +15,13 @@ export function CtaSection() {
             Join thousands of creators using Istolo to sell custom prints powered by Solana blockchain.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-            <Button size="lg" className="gap-2">
-              Sign Up Free <ArrowRight className="w-5 h-5" />
-            </Button>
+            <Link to="/shop">
+              <Button size="lg" className="gap-2">
+                Start Shopping <ArrowRight className="w-5 h-5" />
+              </Button>
+            </Link>
             <Button variant="outline" size="lg">
-              View Pricing
+              Learn More
             </Button>
           </div>
           <p className="text-sm text-muted-foreground">
