@@ -1,6 +1,9 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Card } from '../components/Card'
 import { Button } from '../components/Button'
+import { ProductPassportCard } from '../components/ProductPassportCard'
+import type { ProductPassportCertificate } from '../types/passport'
+import { getPersistedCertificate } from '../lib/passport-mint'
 
 export function OrderTrackingPage() {
   const location = useLocation()
@@ -8,6 +11,9 @@ export function OrderTrackingPage() {
   
   const signature = location.state?.signature as string
   const total = location.state?.total as number
+  const stateCertificate = location.state?.passportCertificate as ProductPassportCertificate | undefined
+  const persistedCertificate = getPersistedCertificate()
+  const passportCertificate = stateCertificate ?? persistedCertificate
 
   if (!signature) {
     return (
@@ -87,6 +93,12 @@ export function OrderTrackingPage() {
               </div>
             </div>
           </Card>
+
+          {passportCertificate ? (
+            <div className="mt-6">
+              <ProductPassportCard certificate={passportCertificate} />
+            </div>
+          ) : null}
         </div>
       </div>
     </div>

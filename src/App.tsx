@@ -3,6 +3,7 @@ import { LandingPage } from './pages/LandingPage'
 import { ShopPage } from './pages/ShopPage'
 import { CheckoutPage } from './pages/CheckoutPage'
 import { OrderTrackingPage } from './pages/OrderTrackingPage'
+import { CreatorCollectionPage } from './pages/CreatorCollectionPage'
 import { Header } from './components/Header'
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/shop" element={<ShopPage />} />
+        <Route path="/creator/collections" element={<CreatorCollectionPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/order-tracking" element={<OrderTrackingPage />} />
       </Routes>

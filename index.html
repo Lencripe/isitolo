@@ -10,8 +10,11 @@
     <div id="root"></div>
     <script type="module">
       import { Buffer } from 'buffer';
+      import process from 'process';
       window.Buffer = Buffer;
       globalThis.Buffer = Buffer;
+      window.process = process;
+      globalThis.process = process;
     </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>

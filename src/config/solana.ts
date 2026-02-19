@@ -34,6 +34,28 @@ export const SOLANA_CONFIG = {
   
   // Token decimals (USDC uses 6 decimals)
   USDC_DECIMALS: 6,
+
+  PASSPORT: {
+    NETWORK: 'devnet' as const,
+    MINT_STRATEGY: 'auto' as 'auto' | 'direct' | 'candy_machine',
+    NFT_SYMBOL: 'ISTOLO-DPP',
+    ENABLE_ONCHAIN_MINT: true,
+    PUBLIC_APP_URL: 'https://istolo.app',
+    METADATA_BASE_URI: 'https://istolo.app/passports',
+    CANDY_MACHINE: {
+      ENABLED: false,
+      ID: '',
+      MINT_ENDPOINT: '',
+      LABEL: 'batch-drop',
+    },
+    DEFAULT_IMAGE: 'https://placehold.co/1024x1024/png?text=Istolo+Passport',
+    MANUFACTURER_NAME: 'Istolo Printing',
+    COUNTRY_OF_ORIGIN: 'EU',
+    DEFAULT_MATERIALS: ['Aluminum', 'Paper Fiber', 'Water-based Ink'],
+    DEFAULT_CERTIFICATIONS: ['REACH', 'RoHS', 'ISO 14001'],
+    DEFAULT_REPAIRABILITY_SCORE: 8,
+    DEFAULT_RECYCLED_CONTENT_PERCENT: 35,
+  },
 }
 
 // Validation helper

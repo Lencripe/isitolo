@@ -66,3 +66,13 @@ export interface SPLTokenConfig {
 }
 
 export type SolanaNetwork = 'devnet' | 'testnet' | 'mainnet-beta'
+
+export type {
+  PassportStatus,
+  PassportMintStrategy,
+  PassportIssuanceMethod,
+  PassportProductSnapshot,
+  PassportDppMetadata,
+  ProductPassportCertificate,
+  PassportIssueInput,
+} from './passport'
