@@ -40,6 +40,9 @@ export function Header({ className }: HeaderProps) {
           <Link to="/shop" className="text-sm font-medium hover:text-primary transition">
             Shop
           </Link>
+          <Link to="/creator/collections" className="text-sm font-medium hover:text-primary transition">
+            Creator Studio
+          </Link>
           {isHome && (
             <>
               <a href="#features" className="text-sm font-medium hover:text-primary transition">

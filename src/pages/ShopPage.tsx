@@ -1,7 +1,12 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Card } from '../components/Card'
 import { Button } from '../components/Button'
+import {
+  loadCreatorCollections,
+  type CreatorCollection,
+  type CreatorCollectionItem,
+} from '../lib/creator-collections'
 
 interface Product {
   id: string
@@ -9,6 +14,9 @@ interface Product {
   description: string
   price: number // Price in USDC
   image: string
+  sourceCollectionId?: string
+  sourceCollectionName?: string
+  sourceItemId?: string
 }
 
 const PRODUCTS: Product[] = [
@@ -44,6 +52,11 @@ const PRODUCTS: Product[] = [
 
 export function ShopPage() {
   const [cart, setCart] = useState<{ product: Product; quantity: number }[]>([])
+  const [creatorCollections, setCreatorCollections] = useState<CreatorCollection[]>([])
+
+  useEffect(() => {
+    setCreatorCollections(loadCreatorCollections())
+  }, [])
 
   const addToCart = (product: Product) => {
     setCart((prev) => {
@@ -57,6 +70,21 @@ export function ShopPage() {
       }
       return [...prev, { product, quantity: 1 }]
     })
+  }
+
+  const addDropItemToCart = (collection: CreatorCollection, item: CreatorCollectionItem) => {
+    const dropProduct: Product = {
+      id: `drop-${collection.id}-${item.id}`,
+      name: `${item.title} (${collection.name})`,
+      description: collection.description,
+      price: item.basePriceUsdc,
+      image: collection.coverImageUrl || 'https://placehold.co/600x400/png?text=Drop+Item',
+      sourceCollectionId: collection.id,
+      sourceCollectionName: collection.name,
+      sourceItemId: item.id,
+    }
+
+    addToCart(dropProduct)
   }
 
   const getTotalItems = () => {
@@ -142,6 +170,61 @@ export function ShopPage() {
             </Card>
           </div>
         )}
+
+        <div className="mt-10">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-bold">Creator Drops</h2>
+            <Link to="/creator/collections">
+              <Button variant="outline" size="sm">Create Drop</Button>
+            </Link>
+          </div>
+
+          {creatorCollections.length === 0 ? (
+            <Card>
+              <div className="p-6 text-sm text-gray-600 dark:text-gray-400">
+                No creator drops available yet. Create a collection in Creator Studio to sell clothing or printable artwork drops.
+              </div>
+            </Card>
+          ) : (
+            <div className="space-y-6">
+              {creatorCollections.map((collection) => (
+                <Card key={collection.id}>
+                  <div className="p-6">
+                    <div className="flex items-center justify-between gap-4 mb-4">
+                      <div>
+                        <h3 className="text-xl font-bold">{collection.name}</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{collection.description}</p>
+                      </div>
+                      <span className="text-xs px-2 py-1 rounded bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300">
+                        {collection.category === 'clothing' ? 'Clothing Drop' : 'Printable Artwork Drop'}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {collection.items.map((item) => (
+                        <Card key={item.id} className="bg-gray-50 dark:bg-gray-900/50">
+                          <div className="p-4">
+                            <h4 className="font-semibold mb-1">{item.title}</h4>
+                            <p className="text-xs text-gray-500 mb-2">{item.sku}</p>
+                            <p className="text-xs text-gray-500 mb-3">Max supply: {item.maxSupply}</p>
+                            <div className="flex items-center justify-between">
+                              <span className="text-lg font-bold text-purple-600 dark:text-purple-400">
+                                {item.basePriceUsdc} USDC
+                              </span>
+                              <Button size="sm" onClick={() => addDropItemToCart(collection, item)}>
+                                Buy Drop
+                              </Button>
+                            </div>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

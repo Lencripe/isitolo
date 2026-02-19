@@ -12,12 +12,16 @@ import { SOLANA_CONFIG } from '../config/solana'
 import { Card } from '../components/Card'
 import { Button } from '../components/Button'
 import type { ProductPassportCertificate } from '../types/passport'
+import { loadCreatorCollections, type CreatorCollection } from '../lib/creator-collections'
 
 interface CartItem {
   product: {
     id: string
     name: string
     price: number
+    sourceCollectionId?: string
+    sourceCollectionName?: string
+    sourceItemId?: string
   }
   quantity: number
 }
@@ -32,8 +36,11 @@ export function CheckoutPage() {
   const [error, setError] = useState<string>('')
   const [walletBalance, setWalletBalance] = useState<number | null>(null)
   const [checkingBalance, setCheckingBalance] = useState(false)
+  const [creatorCollections, setCreatorCollections] = useState<CreatorCollection[]>([])
+  const [selectedCollectionId, setSelectedCollectionId] = useState<string>('')
 
   const cart = (location.state?.cart as CartItem[]) || []
+  const cartCollectionId = cart.find((item) => item.product.sourceCollectionId)?.product.sourceCollectionId
 
   const getTotalPrice = () => {
     return cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
@@ -45,6 +52,17 @@ export function CheckoutPage() {
       checkBalance()
     }
   }, [wallet, status])
+
+  useEffect(() => {
+    const collections = loadCreatorCollections()
+    setCreatorCollections(collections)
+    if (collections.length > 0) {
+      const preferred = cartCollectionId
+        ? collections.find((collection) => collection.id === cartCollectionId)
+        : undefined
+      setSelectedCollectionId(preferred?.id || collections[0].id)
+    }
+  }, [cartCollectionId])
 
   const checkBalance = async () => {
     if (!wallet) return
@@ -166,6 +184,12 @@ export function CheckoutPage() {
       setTxSignature(signature)
       console.log('✅ Payment successful:', signature)
 
+      const selectedCollection = creatorCollections.find((collection) => collection.id === selectedCollectionId)
+
+      if (SOLANA_CONFIG.PASSPORT.MINT_STRATEGY !== 'direct' && creatorCollections.length > 0 && !selectedCollection) {
+        throw new Error('Please select a creator collection for drop minting.')
+      }
+
       const certificate = await issueProductPassport({
         ownerAddress: wallet.account.address.toString(),
         paymentSignature: signature,
@@ -176,6 +200,15 @@ export function CheckoutPage() {
           quantity: item.quantity,
           unitPriceUsdc: item.product.price,
         })),
+        creatorCollection: selectedCollection
+          ? {
+              id: selectedCollection.id,
+              name: selectedCollection.name,
+              category: selectedCollection.category,
+              royaltyBps: selectedCollection.royaltyBps,
+              itemIds: selectedCollection.items.map((item) => item.id),
+            }
+          : undefined,
       }, provider)
 
       setPassportCertificate(certificate)
@@ -329,6 +362,41 @@ export function CheckoutPage() {
                       {' '}(select Devnet, USDC token)
                     </p>
                   </div>
+
+                  {SOLANA_CONFIG.PASSPORT.MINT_STRATEGY !== 'direct' ? (
+                    <div className="mb-6 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                      <p className="text-sm text-purple-800 dark:text-purple-200 mb-2">
+                        🎨 <strong>Drop Collection</strong>
+                      </p>
+                      {creatorCollections.length === 0 ? (
+                        <p className="text-xs text-purple-700 dark:text-purple-300">
+                          No creator collections found. Create one in Creator Studio to attach drop data to Candy Machine mint requests.
+                        </p>
+                      ) : (
+                        <div>
+                          {cartCollectionId ? (
+                            <p className="text-xs text-purple-700 dark:text-purple-300 mb-2">
+                              Drop collection detected from cart and preselected for minting.
+                            </p>
+                          ) : null}
+                          <label className="block text-xs text-purple-700 dark:text-purple-300 mb-1">
+                            Select creator collection
+                          </label>
+                          <select
+                            value={selectedCollectionId}
+                            onChange={(event) => setSelectedCollectionId(event.target.value)}
+                            className="w-full rounded-md border border-purple-200 dark:border-purple-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                          >
+                            {creatorCollections.map((collection) => (
+                              <option key={collection.id} value={collection.id}>
+                                {collection.name} ({collection.category === 'clothing' ? 'Clothing' : 'Printable Artworks'})
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+                    </div>
+                  ) : null}
 
                   <Button
                     onClick={handlePayment}

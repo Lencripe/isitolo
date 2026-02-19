@@ -252,6 +252,7 @@ async function issueWithCandyMachine(
       metadataUri,
       metadataHash,
       dpp,
+      creatorCollection: input.creatorCollection ?? null,
       products: input.products,
       totalUsdc: input.totalUsdc,
     }),

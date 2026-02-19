@@ -46,4 +46,11 @@ export interface PassportIssueInput {
   paymentSignature: string
   products: PassportProductSnapshot[]
   totalUsdc: number
+  creatorCollection?: {
+    id: string
+    name: string
+    category: 'clothing' | 'printable_artworks'
+    royaltyBps: number
+    itemIds: string[]
+  }
 }
