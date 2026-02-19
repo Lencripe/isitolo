@@ -1,6 +1,6 @@
 
-import { Link } from 'react-router-dom'
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
+import { Link, useLocation } from 'react-router-dom'
+import { WalletButton } from './WalletButton'
 import { Button } from './Button'
 import { cn } from '@/lib/utils'
 
@@ -9,6 +9,9 @@ interface HeaderProps {
 }
 
 export function Header({ className }: HeaderProps) {
+  const location = useLocation()
+  const isHome = location.pathname === '/'
+
   return (
     <header className={cn(
       "sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60",
@@ -37,16 +40,20 @@ export function Header({ className }: HeaderProps) {
           <Link to="/shop" className="text-sm font-medium hover:text-primary transition">
             Shop
           </Link>
-          <a href="#features" className="text-sm font-medium hover:text-primary transition">
-            Features
-          </a>
-          <a href="#about" className="text-sm font-medium hover:text-primary transition">
-            About
-          </a>
+          {isHome && (
+            <>
+              <a href="#features" className="text-sm font-medium hover:text-primary transition">
+                Features
+              </a>
+              <a href="#about" className="text-sm font-medium hover:text-primary transition">
+                About
+              </a>
+            </>
+          )}
         </nav>
 
         <div className="flex items-center gap-4">
-          <WalletMultiButton />
+          <WalletButton />
           <Link to="/shop">
             <Button variant="default" size="sm">
               Shop Now
