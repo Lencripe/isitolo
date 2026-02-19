@@ -20,6 +20,7 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
       buffer: 'buffer',
+      process: 'process/browser',
       // React 19 has useSyncExternalStore built-in, redirect shim imports to React
       'use-sync-external-store/shim': path.resolve(__dirname, './src/shims/use-sync-external-store.ts'),
       'use-sync-external-store': path.resolve(__dirname, './src/shims/use-sync-external-store.ts'),
@@ -28,6 +29,9 @@ export default defineConfig({
   define: {
     global: 'globalThis',
     'global.Buffer': 'globalThis.Buffer',
+    'global.process': 'globalThis.process',
+    process: 'globalThis.process',
+    'process.env': {},
   },
   build: {
     commonjsOptions: {
@@ -48,6 +52,7 @@ export default defineConfig({
       'bn.js',
       'jayson/lib/client/browser',
       'eventemitter3',
+      'process',
     ],
     // Exclude @solana v1.0 packages from pre-bundling
     exclude: [

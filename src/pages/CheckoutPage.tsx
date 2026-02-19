@@ -7,9 +7,11 @@ import {
   sendUSDCTransferTransaction,
   checkUSDCBalance,
 } from '../lib/usdc-transfer'
+import { issueProductPassport } from '../lib/passport-mint'
 import { SOLANA_CONFIG } from '../config/solana'
 import { Card } from '../components/Card'
 import { Button } from '../components/Button'
+import type { ProductPassportCertificate } from '../types/passport'
 
 interface CartItem {
   product: {
@@ -26,6 +28,7 @@ export function CheckoutPage() {
   const { wallet, status } = useWalletConnection()
   const [loading, setLoading] = useState(false)
   const [txSignature, setTxSignature] = useState<string>('')
+  const [passportCertificate, setPassportCertificate] = useState<ProductPassportCertificate | null>(null)
   const [error, setError] = useState<string>('')
   const [walletBalance, setWalletBalance] = useState<number | null>(null)
   const [checkingBalance, setCheckingBalance] = useState(false)
@@ -163,10 +166,25 @@ export function CheckoutPage() {
       setTxSignature(signature)
       console.log('✅ Payment successful:', signature)
 
+      const certificate = await issueProductPassport({
+        ownerAddress: wallet.account.address.toString(),
+        paymentSignature: signature,
+        totalUsdc: getTotalPrice(),
+        products: cart.map((item) => ({
+          id: item.product.id,
+          name: item.product.name,
+          quantity: item.quantity,
+          unitPriceUsdc: item.product.price,
+        })),
+      }, provider)
+
+      setPassportCertificate(certificate)
+      console.log('🪪 Product passport issued:', certificate.certificateId)
+
       // Navigate to success page after 2 seconds
       setTimeout(() => {
         navigate('/order-tracking', {
-          state: { signature, total: getTotalPrice() },
+          state: { signature, total: getTotalPrice(), passportCertificate: certificate },
         })
       }, 2000)
     } catch (err: any) {
@@ -330,6 +348,12 @@ export function CheckoutPage() {
           </Card>
         </div>
       </div>
+
+                  {passportCertificate ? (
+                    <p className="mt-3 text-xs text-green-700 dark:text-green-300">
+                      Passport issued: {passportCertificate.certificateId}
+                    </p>
+                  ) : null}
     </div>
   )
 }
