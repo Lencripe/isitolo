@@ -96,12 +96,12 @@ export function ShopPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-background text-foreground">
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-4xl font-bold mb-2">Shop</h1>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-muted-foreground">
               Pay with USDC on Solana Devnet
             </p>
           </div>
@@ -125,11 +125,11 @@ export function ShopPage() {
               />
               <div className="p-4">
                 <h3 className="text-xl font-bold mb-2">{product.name}</h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+                <p className="text-muted-foreground text-sm mb-4">
                   {product.description}
                 </p>
                 <div className="flex justify-between items-center">
-                  <span className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                  <span className="text-2xl font-bold text-primary">
                     {product.price} USDC
                   </span>
                   <Button onClick={() => addToCart(product)} size="sm">
@@ -149,11 +149,11 @@ export function ShopPage() {
                 {cart.map((item) => (
                   <div
                     key={item.product.id}
-                    className="flex justify-between items-center py-2 border-b dark:border-gray-700"
+                    className="flex justify-between items-center py-2 border-b border-border"
                   >
                     <div>
                       <span className="font-semibold">{item.product.name}</span>
-                      <span className="text-gray-600 dark:text-gray-400 ml-2">
+                      <span className="text-muted-foreground ml-2">
                         x{item.quantity}
                       </span>
                     </div>
@@ -181,7 +181,7 @@ export function ShopPage() {
 
           {creatorCollections.length === 0 ? (
             <Card>
-              <div className="p-6 text-sm text-gray-600 dark:text-gray-400">
+              <div className="p-6 text-sm text-muted-foreground">
                 No creator drops available yet. Create a collection in Creator Studio to sell clothing or printable artwork drops.
               </div>
             </Card>
@@ -193,22 +193,22 @@ export function ShopPage() {
                     <div className="flex items-center justify-between gap-4 mb-4">
                       <div>
                         <h3 className="text-xl font-bold">{collection.name}</h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">{collection.description}</p>
+                        <p className="text-sm text-muted-foreground">{collection.description}</p>
                       </div>
-                      <span className="text-xs px-2 py-1 rounded bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300">
+                      <span className="text-xs px-2 py-1 rounded bg-primary/15 text-primary">
                         {collection.category === 'clothing' ? 'Clothing Drop' : 'Printable Artwork Drop'}
                       </span>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {collection.items.map((item) => (
-                        <Card key={item.id} className="bg-gray-50 dark:bg-gray-900/50">
+                        <Card key={item.id} className="bg-muted/40">
                           <div className="p-4">
                             <h4 className="font-semibold mb-1">{item.title}</h4>
-                            <p className="text-xs text-gray-500 mb-2">{item.sku}</p>
-                            <p className="text-xs text-gray-500 mb-3">Max supply: {item.maxSupply}</p>
+                            <p className="text-xs text-muted-foreground mb-2">{item.sku}</p>
+                            <p className="text-xs text-muted-foreground mb-3">Max supply: {item.maxSupply}</p>
                             <div className="flex items-center justify-between">
-                              <span className="text-lg font-bold text-purple-600 dark:text-purple-400">
+                              <span className="text-lg font-bold text-primary">
                                 {item.basePriceUsdc} USDC
                               </span>
                               <Button size="sm" onClick={() => addDropItemToCart(collection, item)}>

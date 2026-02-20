@@ -4,53 +4,65 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3%;
+    --background: 48 85% 95%;
+    --foreground: 220 35% 17%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 3%;
+    --card-foreground: 220 28% 18%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3%;
+    --popover-foreground: 220 28% 18%;
 
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 40%;
+    --primary: 24 92% 52%;
+    --primary-foreground: 0 0% 100%;
 
-    --accent: 280 65% 60%;
-    --accent-foreground: 0 0% 100%;
+    --secondary: 208 85% 83%;
+    --secondary-foreground: 220 30% 18%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --muted: 49 70% 88%;
+    --muted-foreground: 220 18% 34%;
 
-    --border: 0 0% 89%;
-    --input: 0 0% 89%;
-    --ring: 280 65% 60%;
+    --accent: 48 95% 54%;
+    --accent-foreground: 220 30% 16%;
 
-    --radius: 0.5rem;
+    --destructive: 0 72% 48%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 212 34% 81%;
+    --input: 212 34% 81%;
+    --ring: 24 92% 52%;
+
+    --radius: 1rem;
   }
 
   .dark {
-    --background: 0 0% 3%;
+    --background: 220 20% 8%;
     --foreground: 0 0% 98%;
 
-    --card: 0 0% 7%;
+    --card: 222 17% 12%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 7%;
+    --popover: 222 17% 12%;
     --popover-foreground: 0 0% 98%;
 
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 63%;
+    --primary: 36 88% 56%;
+    --primary-foreground: 0 0% 7%;
 
-    --accent: 280 65% 60%;
+    --secondary: 220 14% 19%;
+    --secondary-foreground: 0 0% 96%;
+
+    --muted: 220 12% 16%;
+    --muted-foreground: 0 0% 72%;
+
+    --accent: 36 88% 56%;
     --accent-foreground: 0 0% 7%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 7%;
+    --destructive: 0 72% 52%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 14%;
-    --input: 0 0% 14%;
-    --ring: 280 65% 60%;
+    --border: 220 12% 24%;
+    --input: 220 12% 24%;
+    --ring: 36 88% 56%;
   }
 }
 
@@ -60,5 +72,38 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
+    background-image:
+      linear-gradient(45deg, rgba(22, 89, 170, 0.06) 25%, transparent 25%),
+      linear-gradient(-45deg, rgba(239, 112, 35, 0.07) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, rgba(251, 203, 38, 0.11) 75%),
+      linear-gradient(-45deg, transparent 75%, rgba(75, 158, 227, 0.1) 75%),
+      radial-gradient(circle at 85% 5%, rgba(242, 124, 32, 0.2), transparent 36%),
+      radial-gradient(circle at 10% 90%, rgba(252, 211, 47, 0.18), transparent 36%);
+    background-size: 32px 32px, 32px 32px, 32px 32px, 32px 32px, 100% 100%, 100% 100%;
+    background-position: 0 0, 0 16px, 16px -16px, -16px 0, center, center;
+  }
+
+  .dark body {
+    background-image:
+      linear-gradient(45deg, rgba(255, 255, 255, 0.03) 25%, transparent 25%),
+      linear-gradient(-45deg, rgba(255, 255, 255, 0.03) 25%, transparent 25%),
+      radial-gradient(circle at 85% 5%, rgba(244, 179, 43, 0.18), transparent 38%),
+      radial-gradient(circle at 10% 90%, rgba(255, 88, 51, 0.14), transparent 38%);
+    background-size: 36px 36px, 36px 36px, 100% 100%, 100% 100%;
+    background-position: 0 0, 0 18px, center, center;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: "Bebas Neue", "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
+    letter-spacing: 0.04em;
+  }
+
+  .font-display {
+    font-family: "Bebas Neue", "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
+    letter-spacing: 0.06em;
   }
 }
