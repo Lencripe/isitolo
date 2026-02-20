@@ -9,13 +9,13 @@ interface OrderStatusBadgeProps {
 
 function OrderStatusBadge({ status }: OrderStatusBadgeProps) {
   const statusConfig = {
-    pending: { color: 'bg-yellow-100 text-yellow-800', label: 'Pending Payment' },
-    processing: { color: 'bg-blue-100 text-blue-800', label: 'Processing' },
-    confirmed: { color: 'bg-green-100 text-green-800', label: 'Confirmed' },
-    printing: { color: 'bg-purple-100 text-purple-800', label: 'Printing' },
-    shipped: { color: 'bg-indigo-100 text-indigo-800', label: 'Shipped' },
-    delivered: { color: 'bg-emerald-100 text-emerald-800', label: 'Delivered' },
-    cancelled: { color: 'bg-red-100 text-red-800', label: 'Cancelled' },
+    pending: { color: 'bg-yellow-500/15 text-yellow-200', label: 'Pending Payment' },
+    processing: { color: 'bg-blue-500/15 text-blue-200', label: 'Processing' },
+    confirmed: { color: 'bg-emerald-500/15 text-emerald-200', label: 'Confirmed' },
+    printing: { color: 'bg-primary/15 text-primary', label: 'Printing' },
+    shipped: { color: 'bg-indigo-500/15 text-indigo-200', label: 'Shipped' },
+    delivered: { color: 'bg-emerald-500/15 text-emerald-200', label: 'Delivered' },
+    cancelled: { color: 'bg-rose-500/15 text-rose-200', label: 'Cancelled' },
   }
 
   const config = statusConfig[status]

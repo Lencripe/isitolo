@@ -5,63 +5,61 @@ import { ArrowRight } from 'lucide-react'
 
 export function HeroSection() {
   return (
-    <section className="relative py-20 md:py-28">
-      <div className="container max-w-7xl px-4 mx-auto">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
+    <section className="relative overflow-hidden border-b border-border/50">
+      <div className="absolute inset-0">
+        <img
+          src="https://images.unsplash.com/photo-1742473716872-ff82599f90db?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600"
+          alt="Hero background"
+          className="h-full w-full object-cover opacity-35"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent" />
+      </div>
+
+      <div className="relative container max-w-7xl px-4 mx-auto py-24 md:py-32">
+        <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-12 items-end">
           <div className="space-y-6">
-            <div className="space-y-2">
-              <p className="text-primary font-semibold text-sm">Welcome to Istolo</p>
-              <h1 className="text-5xl md:text-6xl font-bold tracking-tight leading-tight">
-                Print Your Art <span className="text-primary">On Demand</span>
-              </h1>
-            </div>
-            <p className="text-lg text-muted-foreground max-w-lg">
-              Create stunning metal and paper prints of your artwork. Built on Solana blockchain for secure, transparent payments. Your creative vision, our production excellence.
+            <p className="text-xs font-semibold uppercase tracking-[0.45em] text-muted-foreground">
+              The future of African fashion
+            </p>
+            <h1 className="text-6xl md:text-7xl font-bold leading-none font-display">
+              BUY. WEAR. OWN. <span className="text-primary">ON-CHAIN.</span>
+            </h1>
+            <p className="text-lg text-muted-foreground max-w-xl">
+              Premium streetwear authenticated by NFC technology and secured on the Solana blockchain.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <Link to="/shop">
-                <Button size="lg" className="gap-2">
-                  Start Creating <ArrowRight className="w-5 h-5" />
+                <Button size="lg" className="gap-2 uppercase tracking-[0.25em] text-xs">
+                  Shop Collection <ArrowRight className="w-4 h-4" />
                 </Button>
               </Link>
-              <Button variant="outline" size="lg">
-                View Gallery
+              <Button variant="outline" size="lg" className="uppercase tracking-[0.25em] text-xs">
+                Sell Your Brand
               </Button>
             </div>
           </div>
-          
-          <div className="relative h-96 md:h-full">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl" />
-            <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent rounded-2xl" />
-            <img 
-              src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600&h=600&fit=crop"
-              alt="Sample artwork"
-              className="w-full h-full object-cover rounded-2xl"
-            />
-          </div>
-        </div>
 
-        {/* Trust badges */}
-        <div className="mt-20 pt-20 border-t border-border">
-          <p className="text-center text-sm text-muted-foreground mb-8">
-            Trusted by creators worldwide
-          </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <p className="text-3xl font-bold">10K+</p>
-              <p className="text-sm text-muted-foreground">Creators</p>
+          <div className="rounded-2xl border border-border/60 bg-card/80 overflow-hidden">
+            <div className="relative h-64">
+              <img
+                src="https://images.unsplash.com/photo-1649962843028-54905316eb21?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200"
+                alt="Dammed Saint"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
             </div>
-            <div>
-              <p className="text-3xl font-bold">50K+</p>
-              <p className="text-sm text-muted-foreground">Prints Sold</p>
-            </div>
-            <div>
-              <p className="text-3xl font-bold">100%</p>
-              <p className="text-sm text-muted-foreground">Solana Powered</p>
-            </div>
-            <div>
-              <p className="text-3xl font-bold">&lt;1min</p>
-              <p className="text-sm text-muted-foreground">Payment Time</p>
+            <div className="p-6 space-y-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.4em] text-muted-foreground">Featured brand</p>
+                <h2 className="text-3xl font-bold mt-2">Dammed Saint</h2>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Minimalist designs for the digital age. Every piece is an entry point into exclusive drops and digital assets.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <span className="text-xs uppercase tracking-[0.2em] border border-border/60 px-3 py-1 rounded-full">NFC Authenticated</span>
+                <span className="text-xs uppercase tracking-[0.2em] border border-border/60 px-3 py-1 rounded-full">Solana NFT</span>
+              </div>
             </div>
           </div>
         </div>

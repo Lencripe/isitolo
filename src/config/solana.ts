@@ -6,6 +6,8 @@
  */
 
 // Network Configuration
+const PUBLIC_APP_URL = (import.meta.env.VITE_PUBLIC_APP_URL || 'https://istolo.store').replace(/\/$/, '')
+
 export const SOLANA_CONFIG = {
   // Devnet RPC endpoint
   RPC_ENDPOINT: 'https://api.devnet.solana.com',
@@ -40,8 +42,8 @@ export const SOLANA_CONFIG = {
     MINT_STRATEGY: 'auto' as 'auto' | 'direct' | 'candy_machine',
     NFT_SYMBOL: 'ISTOLO-DPP',
     ENABLE_ONCHAIN_MINT: true,
-    PUBLIC_APP_URL: 'https://istolo.app',
-    METADATA_BASE_URI: 'https://istolo.app/passports',
+    PUBLIC_APP_URL,
+    METADATA_BASE_URI: `${PUBLIC_APP_URL}/passports`,
     CANDY_MACHINE: {
       ENABLED: false,
       ID: '',

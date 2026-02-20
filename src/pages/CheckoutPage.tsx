@@ -230,7 +230,7 @@ export function CheckoutPage() {
 
   if (cart.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
         <Card className="p-8 text-center">
           <h2 className="text-2xl font-bold mb-4">Your cart is empty</h2>
           <Button onClick={() => navigate('/shop')}>Go to Shop</Button>
@@ -243,7 +243,7 @@ export function CheckoutPage() {
   const canPay = status === 'connected' && wallet && !loading && !txSignature
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-background text-foreground">
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold mb-8">Checkout</h1>
 
@@ -254,11 +254,11 @@ export function CheckoutPage() {
               {cart.map((item) => (
                 <div
                   key={item.product.id}
-                  className="flex justify-between items-center py-3 border-b dark:border-gray-700"
+                  className="flex justify-between items-center py-3 border-b border-border"
                 >
                   <div>
                     <span className="font-semibold">{item.product.name}</span>
-                    <span className="text-gray-600 dark:text-gray-400 ml-2">
+                    <span className="text-muted-foreground ml-2">
                       x{item.quantity}
                     </span>
                   </div>
@@ -269,7 +269,7 @@ export function CheckoutPage() {
               ))}
               <div className="flex justify-between items-center pt-4 text-xl font-bold">
                 <span>Total:</span>
-                <span className="text-purple-600 dark:text-purple-400">
+                <span className="text-primary">
                   {getTotalPrice()} USDC
                 </span>
               </div>
@@ -282,20 +282,20 @@ export function CheckoutPage() {
 
               {status !== 'connected' || !wallet ? (
                 <div className="text-center py-8">
-                  <p className="text-gray-600 dark:text-gray-400 mb-4">
+                  <p className="text-muted-foreground mb-4">
                     Please connect your wallet to continue
                   </p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-muted-foreground">
                     Make sure you have {getTotalPrice()} USDC available on Devnet
                   </p>
                 </div>
               ) : (
                 <div>
                   <div className="mb-6">
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                    <p className="text-sm text-muted-foreground mb-2">
                       Connected Wallet:
                     </p>
-                    <p className="font-mono text-sm bg-gray-100 dark:bg-gray-800 p-2 rounded break-all">
+                    <p className="font-mono text-sm bg-muted/70 border border-border/60 p-2 rounded break-all">
                       {wallet.account.address.toString()}
                     </p>
                   </div>
@@ -303,59 +303,59 @@ export function CheckoutPage() {
                   {/* Balance Information */}
                   <div className="mb-6">
                     <div className="flex justify-between items-center mb-2">
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                      <p className="text-sm text-muted-foreground">
                         USDC Balance:
                       </p>
                       {checkingBalance ? (
-                        <span className="text-sm text-gray-500">Checking...</span>
+                        <span className="text-sm text-muted-foreground">Checking...</span>
                       ) : walletBalance !== null ? (
-                        <span className={`text-sm font-bold ${hasEnoughBalance ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                        <span className={`text-sm font-bold ${hasEnoughBalance ? 'text-emerald-400' : 'text-rose-400'}`}>
                           {walletBalance.toFixed(2)} USDC
                         </span>
                       ) : (
-                        <span className="text-sm text-gray-500">—</span>
+                        <span className="text-sm text-muted-foreground">—</span>
                       )}
                     </div>
                     {walletBalance !== null && !hasEnoughBalance && (
-                      <p className="text-xs text-red-600 dark:text-red-400">
+                      <p className="text-xs text-rose-400">
                         Insufficient balance. Need {getTotalPrice()} USDC but have {walletBalance.toFixed(2)} USDC.
                       </p>
                     )}
                   </div>
 
                   {error && (
-                    <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
-                      <p className="text-sm text-red-800 dark:text-red-200">{error}</p>
+                    <div className="mb-6 p-4 bg-rose-500/10 border border-rose-500/30 rounded-lg">
+                      <p className="text-sm text-rose-200">{error}</p>
                     </div>
                   )}
 
                   {txSignature && (
-                    <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                      <p className="text-sm text-green-800 dark:text-green-200 mb-2">
+                    <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
+                      <p className="text-sm text-emerald-200 mb-2">
                         ✅ Payment successful!
                       </p>
                       <a
                         href={`https://explorer.solana.com/tx/${txSignature}?cluster=devnet`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs font-mono text-green-600 dark:text-green-400 underline break-all"
+                        className="text-xs font-mono text-emerald-300 underline break-all"
                       >
                         {txSignature}
                       </a>
                     </div>
                   )}
 
-                  <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                    <p className="text-sm text-blue-800 dark:text-blue-200 mb-2">
+                  <div className="mb-6 p-4 bg-muted/60 border border-border/60 rounded-lg">
+                    <p className="text-sm text-foreground mb-2">
                       💡 <strong>Devnet USDC Payment</strong>
                     </p>
-                    <p className="text-xs text-blue-700 dark:text-blue-300">
+                    <p className="text-xs text-muted-foreground">
                       Get Devnet USDC from{' '}
                       <a
                         href="https://spl-token-faucet.com/"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="underline font-semibold"
+                        className="underline font-semibold text-primary"
                       >
                         SPL Token Faucet
                       </a>
@@ -364,28 +364,28 @@ export function CheckoutPage() {
                   </div>
 
                   {SOLANA_CONFIG.PASSPORT.MINT_STRATEGY !== 'direct' ? (
-                    <div className="mb-6 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                      <p className="text-sm text-purple-800 dark:text-purple-200 mb-2">
+                    <div className="mb-6 p-4 bg-primary/10 border border-primary/30 rounded-lg">
+                      <p className="text-sm text-primary-foreground mb-2">
                         🎨 <strong>Drop Collection</strong>
                       </p>
                       {creatorCollections.length === 0 ? (
-                        <p className="text-xs text-purple-700 dark:text-purple-300">
+                        <p className="text-xs text-muted-foreground">
                           No creator collections found. Create one in Creator Studio to attach drop data to Candy Machine mint requests.
                         </p>
                       ) : (
                         <div>
                           {cartCollectionId ? (
-                            <p className="text-xs text-purple-700 dark:text-purple-300 mb-2">
+                            <p className="text-xs text-muted-foreground mb-2">
                               Drop collection detected from cart and preselected for minting.
                             </p>
                           ) : null}
-                          <label className="block text-xs text-purple-700 dark:text-purple-300 mb-1">
+                          <label className="block text-xs text-muted-foreground mb-1">
                             Select creator collection
                           </label>
                           <select
                             value={selectedCollectionId}
                             onChange={(event) => setSelectedCollectionId(event.target.value)}
-                            className="w-full rounded-md border border-purple-200 dark:border-purple-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
                           >
                             {creatorCollections.map((collection) => (
                               <option key={collection.id} value={collection.id}>
@@ -418,7 +418,7 @@ export function CheckoutPage() {
       </div>
 
                   {passportCertificate ? (
-                    <p className="mt-3 text-xs text-green-700 dark:text-green-300">
+                    <p className="mt-3 text-xs text-emerald-300">
                       Passport issued: {passportCertificate.certificateId}
                     </p>
                   ) : null}

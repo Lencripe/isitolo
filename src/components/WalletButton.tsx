@@ -46,20 +46,20 @@ export function WalletButton() {
       </Button>
 
       {showWallets && (
-        <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
+        <div className="absolute right-0 mt-2 w-56 bg-card/95 rounded-lg shadow-lg border border-border/60 z-50">
           <div className="py-2">
             {connectors.length > 0 ? (
               connectors.map((connector) => (
                 <button
                   key={connector.id}
                   onClick={() => handleConnect(connector.id)}
-                  className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  className="w-full px-4 py-2 text-left text-sm hover:bg-muted/60 transition-colors"
                 >
                   {connector.name}
                 </button>
               ))
             ) : (
-              <div className="px-4 py-2 text-sm text-gray-500">
+              <div className="px-4 py-2 text-sm text-muted-foreground">
                 No wallets detected
               </div>
             )}
