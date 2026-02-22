@@ -169,9 +169,34 @@ Modify `src/context/SolanaProvider.tsx` to:
 Create a `.env` file (optional):
 
 ```env
+# Solana
 VITE_SOLANA_NETWORK=devnet
 VITE_RPC_ENDPOINT=https://api.devnet.solana.com
+
+# App URL used in generated metadata links
+VITE_PUBLIC_APP_URL=https://istolo.store
+
+# DPP storage pipeline: mock | arweave | onchain | hybrid
+VITE_DPP_STORAGE_MODE=mock
+
+# If true, storage failures throw and block issuance; if false, fallback is allowed
+VITE_DPP_STORAGE_STRICT=false
+
+# Arweave upload API (required for arweave/hybrid mode)
+VITE_ARWEAVE_UPLOAD_ENDPOINT=
+
+# Optional on-chain pointer API + target wallet/program address
+# Used for onchain/hybrid mode
+VITE_DPP_POINTER_ENDPOINT=
+VITE_DPP_POINTER_WALLET=
 ```
+
+### DPP Mode Quick Examples
+
+- **Local/dev fallback only**: set `VITE_DPP_STORAGE_MODE=mock`
+- **Arweave only**: set `VITE_DPP_STORAGE_MODE=arweave` and `VITE_ARWEAVE_UPLOAD_ENDPOINT`
+- **On-chain pointer only**: set `VITE_DPP_STORAGE_MODE=onchain` and `VITE_DPP_POINTER_ENDPOINT`
+- **Hybrid**: set `VITE_DPP_STORAGE_MODE=hybrid` with both upload and pointer endpoints
 
 ## Next Steps
 

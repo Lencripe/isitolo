@@ -2,18 +2,18 @@
 const steps = [
   {
     number: '01',
-    title: 'Buy with USDC',
-    description: 'Connect your wallet and purchase exclusive fashion items using USDC on Solana. Fast, secure, and transparent.',
+    title: 'Create the Drop',
+    description: 'Print verified apparel, embed NFC chips, and link each item to a Digital Product Passport on-chain.',
   },
   {
     number: '02',
-    title: 'Tap to Verify',
-    description: 'Receive your physical item. Locate the hidden NFC chip and tap your phone to verify authenticity on-chain.',
+    title: 'Sell with Solana Pay',
+    description: 'Accept USDC at checkout for standard or NFC items. Enable payouts, royalties, and merch storefronts.',
   },
   {
     number: '03',
-    title: 'Own On-Chain',
-    description: 'Mint your Digital Product Passport (NFT). Access exclusive content, events, and resale protection.',
+    title: 'Unlock Access',
+    description: 'Tap to verify, collect rewards, and access ticketed events or drops with on-chain ownership proof.',
   },
 ]
 
@@ -26,10 +26,10 @@ export function FeaturesSection() {
             How it works
           </p>
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
-            Own Your Style On-Chain
+            Verified Merch, Built for Community
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Three steps from checkout to verified ownership.
+            From NFC verification to event tickets and resale royalties.
           </p>
         </div>
 

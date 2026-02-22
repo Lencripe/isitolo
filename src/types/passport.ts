@@ -1,6 +1,16 @@
 export type PassportStatus = 'issued' | 'pending' | 'failed'
 export type PassportMintStrategy = 'direct' | 'candy_machine' | 'auto'
 export type PassportIssuanceMethod = 'direct' | 'candy_machine' | 'offchain'
+export type DppStorageMode = 'arweave' | 'onchain' | 'hybrid' | 'mock'
+
+export interface DppStorageInfo {
+  mode: DppStorageMode
+  metadataUri: string
+  metadataHash: string
+  arweaveTxId?: string
+  onchainPointerTx?: string
+  usedFallback?: boolean
+}
 
 export interface PassportProductSnapshot {
   id: string
@@ -38,6 +48,7 @@ export interface ProductPassportCertificate {
   network: 'devnet' | 'testnet' | 'mainnet-beta'
   issuedAt: string
   issuanceMethod: PassportIssuanceMethod
+  dppStorage: DppStorageInfo
   dpp: PassportDppMetadata
 }
 
