@@ -17,6 +17,10 @@ async function sha256Hex(input: string): Promise<string> {
     .join('')
 }
 
+export async function hashMetadataJson(metadataJson: string): Promise<string> {
+  return sha256Hex(metadataJson)
+}
+
 function normalizeSku(value: string): string {
   return value
     .trim()

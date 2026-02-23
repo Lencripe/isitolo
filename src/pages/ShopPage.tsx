@@ -7,6 +7,7 @@ import {
   type CreatorCollection,
   type CreatorCollectionItem,
 } from '../lib/creator-collections'
+import { loadCart, saveCart, type StoredCartItem } from '../lib/cart'
 
 interface Product {
   id: string
@@ -51,12 +52,16 @@ const PRODUCTS: Product[] = [
 ]
 
 export function ShopPage() {
-  const [cart, setCart] = useState<{ product: Product; quantity: number }[]>([])
+  const [cart, setCart] = useState<StoredCartItem[]>(() => loadCart())
   const [creatorCollections, setCreatorCollections] = useState<CreatorCollection[]>([])
 
   useEffect(() => {
     setCreatorCollections(loadCreatorCollections())
   }, [])
+
+  useEffect(() => {
+    saveCart(cart)
+  }, [cart])
 
   const addToCart = (product: Product) => {
     setCart((prev) => {

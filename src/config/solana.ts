@@ -42,6 +42,12 @@ export const SOLANA_CONFIG = {
   // Token decimals (USDC uses 6 decimals)
   USDC_DECIMALS: 6,
 
+  REWARDS: {
+    ENABLED: true,
+    POINTS_PER_USDC: 10,
+    REDEEM_USDC_PER_POINT: 0.01,
+  },
+
   PASSPORT: {
     NETWORK: 'devnet' as const,
     MINT_STRATEGY: 'auto' as 'auto' | 'direct' | 'candy_machine',

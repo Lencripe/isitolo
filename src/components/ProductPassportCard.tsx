@@ -1,6 +1,7 @@
 import { Card } from './Card'
 import type { ProductPassportCertificate } from '../types/passport'
 import { buildPassportExplorerUrl } from '../lib/passport-metadata'
+import { buildPassportVerificationUrl, buildQrCodeUrl } from '../lib/verification'
 
 interface ProductPassportCardProps {
   certificate: ProductPassportCertificate
@@ -8,6 +9,8 @@ interface ProductPassportCardProps {
 
 export function ProductPassportCard({ certificate }: ProductPassportCardProps) {
   const explorerUrl = buildPassportExplorerUrl(certificate)
+  const verificationUrl = buildPassportVerificationUrl(certificate)
+  const qrCodeUrl = buildQrCodeUrl(verificationUrl)
 
   return (
     <Card>
@@ -63,6 +66,24 @@ export function ProductPassportCard({ certificate }: ProductPassportCardProps) {
             <span className="font-mono text-xs break-all">{certificate.metadataHash}</span>
           </div>
 
+          {certificate.verification?.issuerPublicKey ? (
+            <div className="py-2 border-b border-border">
+              <span className="text-muted-foreground block mb-2">Issuer Public Key:</span>
+              <span className="font-mono text-xs break-all">
+                {certificate.verification.issuerPublicKey}
+              </span>
+            </div>
+          ) : null}
+
+          {certificate.rewards ? (
+            <div className="py-2 border-b border-border">
+              <span className="text-muted-foreground block mb-2">Rewards Earned:</span>
+              <span className="font-semibold text-sm">
+                +{certificate.rewards.pointsEarned} pts (Balance: {certificate.rewards.balanceAfter} pts)
+              </span>
+            </div>
+          ) : null}
+
           {certificate.mintAddress ? (
             <div className="py-2 border-b border-border">
               <span className="text-muted-foreground block mb-2">Mint Address:</span>
@@ -81,6 +102,19 @@ export function ProductPassportCard({ certificate }: ProductPassportCardProps) {
             View Passport Mint on Explorer
           </a>
         ) : null}
+
+        <div className="mt-6 rounded-lg border border-border/60 bg-muted/40 p-4">
+          <p className="text-sm font-semibold mb-2">Verify this passport</p>
+          <div className="flex flex-col items-center gap-3">
+            <img src={qrCodeUrl} alt="Passport verification QR" className="h-44 w-44" />
+            <a
+              href={verificationUrl}
+              className="text-xs text-primary break-all hover:underline"
+            >
+              {verificationUrl}
+            </a>
+          </div>
+        </div>
       </div>
     </Card>
   )

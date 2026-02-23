@@ -13,18 +13,13 @@ import { Card } from '../components/Card'
 import { Button } from '../components/Button'
 import type { ProductPassportCertificate } from '../types/passport'
 import { loadCreatorCollections, type CreatorCollection } from '../lib/creator-collections'
-
-interface CartItem {
-  product: {
-    id: string
-    name: string
-    price: number
-    sourceCollectionId?: string
-    sourceCollectionName?: string
-    sourceItemId?: string
-  }
-  quantity: number
-}
+import { loadCart, saveCart, type StoredCartItem } from '../lib/cart'
+import {
+  applyRewardsForPurchase,
+  calculateRedeemablePoints,
+  calculateRewardsDiscount,
+  getRewardsBalance,
+} from '../lib/rewards'
 
 export function CheckoutPage() {
   const location = useLocation()
@@ -38,18 +33,28 @@ export function CheckoutPage() {
   const [checkingBalance, setCheckingBalance] = useState(false)
   const [creatorCollections, setCreatorCollections] = useState<CreatorCollection[]>([])
   const [selectedCollectionId, setSelectedCollectionId] = useState<string>('')
+  const [rewardsBalance, setRewardsBalance] = useState(0)
+  const [redeemRewards, setRedeemRewards] = useState(false)
 
-  const cart = (location.state?.cart as CartItem[]) || []
-  const cartCollectionId = cart.find((item) => item.product.sourceCollectionId)?.product.sourceCollectionId
+  const navigationCart = location.state?.cart as StoredCartItem[] | undefined
+  const initialCart = navigationCart && navigationCart.length > 0 ? navigationCart : loadCart()
+  const [cartItems, setCartItems] = useState<StoredCartItem[]>(initialCart)
+  const cartCollectionId = cartItems.find((item) => item.product.sourceCollectionId)?.product.sourceCollectionId
 
   const getTotalPrice = () => {
-    return cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
+    return cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
+  }
+
+  const handleRemoveItem = (productId: string) => {
+    setCartItems((items) => items.filter((item) => item.product.id !== productId))
   }
 
   // Check wallet USDC balance when wallet connects
   useEffect(() => {
     if (wallet && status === 'connected') {
       checkBalance()
+      const rewards = getRewardsBalance(wallet.account.address.toString())
+      setRewardsBalance(rewards.points)
     }
   }, [wallet, status])
 
@@ -64,13 +69,17 @@ export function CheckoutPage() {
     }
   }, [cartCollectionId])
 
+  useEffect(() => {
+    saveCart(cartItems)
+  }, [cartItems])
+
   const checkBalance = async () => {
     if (!wallet) return
     setCheckingBalance(true)
     try {
       const { balance } = await checkUSDCBalance(
         wallet.account.address.toString(),
-        getTotalPrice()
+        getPayableTotal()
       )
       setWalletBalance(balance)
     } catch (err) {
@@ -98,9 +107,10 @@ export function CheckoutPage() {
       }
 
       // Create the USDC transfer transaction
+      const payableTotal = getPayableTotal()
       const transaction = await createUSDCTransferTransaction(
         wallet.account.address.toString(),
-        getTotalPrice()
+        payableTotal
       )
 
       if (!transaction) {
@@ -190,16 +200,28 @@ export function CheckoutPage() {
         throw new Error('Please select a creator collection for drop minting.')
       }
 
+      const baseTotal = getTotalPrice()
+      const pointsToRedeem = redeemRewards && SOLANA_CONFIG.REWARDS.ENABLED
+        ? calculateRedeemablePoints(baseTotal, rewardsBalance)
+        : 0
+      const rewardsSnapshot = SOLANA_CONFIG.REWARDS.ENABLED
+        ? applyRewardsForPurchase(wallet.account.address.toString(), baseTotal, pointsToRedeem)
+        : undefined
+      if (rewardsSnapshot) {
+        setRewardsBalance(rewardsSnapshot.balanceAfter)
+      }
+
       const certificate = await issueProductPassport({
         ownerAddress: wallet.account.address.toString(),
         paymentSignature: signature,
-        totalUsdc: getTotalPrice(),
-        products: cart.map((item) => ({
+        totalUsdc: payableTotal,
+        products: cartItems.map((item) => ({
           id: item.product.id,
           name: item.product.name,
           quantity: item.quantity,
           unitPriceUsdc: item.product.price,
         })),
+        rewards: rewardsSnapshot,
         creatorCollection: selectedCollection
           ? {
               id: selectedCollection.id,
@@ -228,7 +250,7 @@ export function CheckoutPage() {
     }
   }
 
-  if (cart.length === 0) {
+  if (cartItems.length === 0) {
     return (
       <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
         <Card className="p-8 text-center">
@@ -239,7 +261,14 @@ export function CheckoutPage() {
     )
   }
 
-  const hasEnoughBalance = walletBalance !== null && walletBalance >= getTotalPrice()
+  const getRedeemablePoints = () => calculateRedeemablePoints(getTotalPrice(), rewardsBalance)
+  const getRewardsDiscount = () =>
+    redeemRewards && SOLANA_CONFIG.REWARDS.ENABLED
+      ? calculateRewardsDiscount(getRedeemablePoints())
+      : 0
+  const getPayableTotal = () => Math.max(0, getTotalPrice() - getRewardsDiscount())
+
+  const hasEnoughBalance = walletBalance !== null && walletBalance >= getPayableTotal()
   const canPay = status === 'connected' && wallet && !loading && !txSignature
 
   return (
@@ -251,7 +280,7 @@ export function CheckoutPage() {
           <Card>
             <div className="p-6">
               <h2 className="text-2xl font-bold mb-4">Order Summary</h2>
-              {cart.map((item) => (
+              {cartItems.map((item) => (
                 <div
                   key={item.product.id}
                   className="flex justify-between items-center py-3 border-b border-border"
@@ -262,16 +291,63 @@ export function CheckoutPage() {
                       x{item.quantity}
                     </span>
                   </div>
-                  <span className="font-bold">
-                    {item.product.price * item.quantity} USDC
-                  </span>
+                  <div className="flex items-center gap-3">
+                    <span className="font-bold">
+                      {item.product.price * item.quantity} USDC
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveItem(item.product.id)}
+                      className="text-xs text-rose-300 hover:text-rose-200"
+                    >
+                      Remove
+                    </button>
+                  </div>
                 </div>
               ))}
-              <div className="flex justify-between items-center pt-4 text-xl font-bold">
-                <span>Total:</span>
-                <span className="text-primary">
-                  {getTotalPrice()} USDC
-                </span>
+              {SOLANA_CONFIG.REWARDS.ENABLED ? (
+                <div className="mt-4 rounded-lg border border-border/60 bg-muted/40 p-4">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Rewards balance:</span>
+                    <span className="font-semibold">{rewardsBalance} pts</span>
+                  </div>
+                  <div className="mt-2 flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-semibold">Redeem points</p>
+                      <p className="text-xs text-muted-foreground">
+                        Use up to {getRedeemablePoints()} pts for this order.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setRedeemRewards((value) => !value)}
+                      className={`rounded-full border px-3 py-1 text-xs font-semibold ${
+                        redeemRewards ? 'border-emerald-400 text-emerald-300' : 'border-border text-muted-foreground'
+                      }`}
+                    >
+                      {redeemRewards ? 'Applied' : 'Apply'}
+                    </button>
+                  </div>
+                </div>
+              ) : null}
+
+              <div className="mt-4 space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Subtotal:</span>
+                  <span className="font-semibold">{getTotalPrice()} USDC</span>
+                </div>
+                {redeemRewards && SOLANA_CONFIG.REWARDS.ENABLED ? (
+                  <div className="flex justify-between text-emerald-300">
+                    <span>Rewards discount:</span>
+                    <span>-{getRewardsDiscount().toFixed(2)} USDC</span>
+                  </div>
+                ) : null}
+                <div className="flex justify-between items-center pt-2 text-xl font-bold">
+                  <span>Total:</span>
+                  <span className="text-primary">
+                    {getPayableTotal().toFixed(2)} USDC
+                  </span>
+                </div>
               </div>
             </div>
           </Card>
@@ -286,7 +362,7 @@ export function CheckoutPage() {
                     Please connect your wallet to continue
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    Make sure you have {getTotalPrice()} USDC available on Devnet
+                    Make sure you have {getPayableTotal().toFixed(2)} USDC available on Devnet
                   </p>
                 </div>
               ) : (
@@ -318,7 +394,7 @@ export function CheckoutPage() {
                     </div>
                     {walletBalance !== null && !hasEnoughBalance && (
                       <p className="text-xs text-rose-400">
-                        Insufficient balance. Need {getTotalPrice()} USDC but have {walletBalance.toFixed(2)} USDC.
+                        Insufficient balance. Need {getPayableTotal().toFixed(2)} USDC but have {walletBalance.toFixed(2)} USDC.
                       </p>
                     )}
                   </div>
@@ -408,7 +484,7 @@ export function CheckoutPage() {
                       ? 'Processing...'
                       : walletBalance !== null && !hasEnoughBalance
                         ? 'Insufficient Balance'
-                        : `Pay ${getTotalPrice()} USDC`}
+                        : `Pay ${getPayableTotal().toFixed(2)} USDC`}
                   </Button>
                 </div>
               )}
