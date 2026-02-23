@@ -36,6 +36,17 @@ export interface PassportDppMetadata {
   issuedAt: string
 }
 
+export interface PassportVerificationProof {
+  issuerPublicKey?: string
+  issuerSignature?: string
+}
+
+export interface PassportRewardsSnapshot {
+  pointsEarned: number
+  pointsRedeemed: number
+  balanceAfter: number
+}
+
 export interface ProductPassportCertificate {
   certificateId: string
   status: PassportStatus
@@ -50,6 +61,8 @@ export interface ProductPassportCertificate {
   issuanceMethod: PassportIssuanceMethod
   dppStorage: DppStorageInfo
   dpp: PassportDppMetadata
+  verification?: PassportVerificationProof
+  rewards?: PassportRewardsSnapshot
 }
 
 export interface PassportIssueInput {
@@ -57,6 +70,7 @@ export interface PassportIssueInput {
   paymentSignature: string
   products: PassportProductSnapshot[]
   totalUsdc: number
+  rewards?: PassportRewardsSnapshot
   creatorCollection?: {
     id: string
     name: string

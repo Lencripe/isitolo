@@ -4,6 +4,7 @@ import { ShopPage } from './pages/ShopPage'
 import { CheckoutPage } from './pages/CheckoutPage'
 import { OrderTrackingPage } from './pages/OrderTrackingPage'
 import { CreatorCollectionPage } from './pages/CreatorCollectionPage'
+import { PassportVerifyPage } from './pages/PassportVerifyPage'
 import { Header } from './components/Header'
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         <Route path="/creator/collections" element={<CreatorCollectionPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/order-tracking" element={<OrderTrackingPage />} />
+        <Route path="/verify" element={<PassportVerifyPage />} />
       </Routes>
     </Router>
   )

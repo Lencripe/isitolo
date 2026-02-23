@@ -75,6 +75,8 @@ export type {
   DppStorageInfo,
   PassportProductSnapshot,
   PassportDppMetadata,
+  PassportVerificationProof,
+  PassportRewardsSnapshot,
   ProductPassportCertificate,
   PassportIssueInput,
 } from './passport'

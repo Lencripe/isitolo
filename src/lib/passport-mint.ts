@@ -9,6 +9,7 @@ import {
   buildPassportMetadataBundle,
 } from './passport-metadata'
 import { persistDppStorage } from './dpp-storage'
+import { buildVerificationMessage, encodeBase64 } from './verification'
 import {
   Connection,
   Keypair,
@@ -50,6 +51,7 @@ interface SignerProvider {
   isConnected?: boolean
   connect?: () => Promise<unknown>
   signTransaction: (transaction: Transaction) => Promise<Transaction>
+  signMessage?: (message: Uint8Array) => Promise<Uint8Array | ArrayBuffer>
 }
 
 interface MintExecutionResult {
@@ -303,6 +305,16 @@ export async function issueProductPassport(
   let mintSignature: string | undefined
   let issuanceMethod: ProductPassportCertificate['issuanceMethod'] = 'offchain'
 
+  const issuerPublicKey = signerProvider?.publicKey?.toString() || input.ownerAddress
+  let issuerSignature: string | undefined
+  if (signerProvider?.signMessage) {
+    const message = buildVerificationMessage(certificateId, storage.metadataHash)
+    const messageBytes = new TextEncoder().encode(message)
+    const signed = await signerProvider.signMessage(messageBytes)
+    const signatureBytes = signed instanceof Uint8Array ? signed : new Uint8Array(signed)
+    issuerSignature = encodeBase64(signatureBytes)
+  }
+
   if (SOLANA_CONFIG.PASSPORT.ENABLE_ONCHAIN_MINT) {
     if (!signerProvider || !signerProvider.signTransaction) {
       throw new Error('Wallet signer provider is required for on-chain passport minting')
@@ -356,6 +368,11 @@ export async function issueProductPassport(
     issuanceMethod,
     dppStorage: storage,
     dpp,
+    verification: {
+      issuerPublicKey,
+      issuerSignature,
+    },
+    rewards: input.rewards,
   }
 
   persistCertificate(certificate)
