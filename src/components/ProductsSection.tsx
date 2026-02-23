@@ -45,10 +45,10 @@ export function ProductsSection() {
           <div className="space-y-3">
             <p className="text-xs font-semibold uppercase tracking-[0.45em] text-muted-foreground">Latest drops</p>
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
-              Fresh from the atelier. Verified on-chain.
+              Drops, merch, and verified NFC gear.
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl">
-              Curated releases from African designers, authenticated with NFC and NFTs.
+              From community tees to premium drops, every item can carry an on-chain passport.
             </p>
           </div>
           <Link to="/shop">

@@ -7,6 +7,11 @@
 
 // Network Configuration
 const PUBLIC_APP_URL = (import.meta.env.VITE_PUBLIC_APP_URL || 'https://istolo.store').replace(/\/$/, '')
+const DPP_STORAGE_MODE = (import.meta.env.VITE_DPP_STORAGE_MODE || 'mock') as
+  | 'arweave'
+  | 'onchain'
+  | 'hybrid'
+  | 'mock'
 
 export const SOLANA_CONFIG = {
   // Devnet RPC endpoint
@@ -44,6 +49,13 @@ export const SOLANA_CONFIG = {
     ENABLE_ONCHAIN_MINT: true,
     PUBLIC_APP_URL,
     METADATA_BASE_URI: `${PUBLIC_APP_URL}/passports`,
+    DPP_STORAGE: {
+      MODE: DPP_STORAGE_MODE,
+      STRICT_MODE: import.meta.env.VITE_DPP_STORAGE_STRICT === 'true',
+      ARWEAVE_UPLOAD_ENDPOINT: import.meta.env.VITE_ARWEAVE_UPLOAD_ENDPOINT || '',
+      ONCHAIN_POINTER_WALLET: import.meta.env.VITE_DPP_POINTER_WALLET || '',
+      ONCHAIN_POINTER_ENDPOINT: import.meta.env.VITE_DPP_POINTER_ENDPOINT || '',
+    },
     CANDY_MACHINE: {
       ENABLED: false,
       ID: '',

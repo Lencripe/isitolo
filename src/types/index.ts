@@ -71,6 +71,8 @@ export type {
   PassportStatus,
   PassportMintStrategy,
   PassportIssuanceMethod,
+  DppStorageMode,
+  DppStorageInfo,
   PassportProductSnapshot,
   PassportDppMetadata,
   ProductPassportCertificate,

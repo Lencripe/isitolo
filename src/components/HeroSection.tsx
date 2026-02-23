@@ -19,22 +19,22 @@ export function HeroSection() {
         <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-12 items-end">
           <div className="space-y-6">
             <p className="text-xs font-semibold uppercase tracking-[0.45em] text-muted-foreground">
-              The future of African fashion
+              Infrastructure for verified merch
             </p>
             <h1 className="text-6xl md:text-7xl font-bold leading-none font-display">
-              BUY. WEAR. OWN. <span className="text-primary">ON-CHAIN.</span>
+              MAKE. VERIFY. SELL. <span className="text-primary">ON-CHAIN.</span>
             </h1>
             <p className="text-lg text-muted-foreground max-w-xl">
-              Premium streetwear authenticated by NFC technology and secured on the Solana blockchain.
+              We power NFC-enabled apparel, digital product passports, and Solana Pay checkout for African creators and global brands.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <Link to="/shop">
                 <Button size="lg" className="gap-2 uppercase tracking-[0.25em] text-xs">
-                  Shop Collection <ArrowRight className="w-4 h-4" />
+                  Explore Store <ArrowRight className="w-4 h-4" />
                 </Button>
               </Link>
               <Button variant="outline" size="lg" className="uppercase tracking-[0.25em] text-xs">
-                Sell Your Brand
+                Launch Your Merch
               </Button>
             </div>
           </div>
@@ -51,14 +51,14 @@ export function HeroSection() {
             <div className="p-6 space-y-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.4em] text-muted-foreground">Featured brand</p>
-                <h2 className="text-3xl font-bold mt-2">Dammed Saint</h2>
+                <h2 className="text-3xl font-bold mt-2">Nkosi</h2>
               </div>
               <p className="text-sm text-muted-foreground">
-                Minimalist designs for the digital age. Every piece is an entry point into exclusive drops and digital assets.
+                NFC-verified collections with on-chain proof, community perks, and event access built in.
               </p>
               <div className="flex flex-wrap gap-2">
-                <span className="text-xs uppercase tracking-[0.2em] border border-border/60 px-3 py-1 rounded-full">NFC Authenticated</span>
-                <span className="text-xs uppercase tracking-[0.2em] border border-border/60 px-3 py-1 rounded-full">Solana NFT</span>
+                <span className="text-xs uppercase tracking-[0.2em] border border-border/60 px-3 py-1 rounded-full">Digital Product Passport</span>
+                <span className="text-xs uppercase tracking-[0.2em] border border-border/60 px-3 py-1 rounded-full">Solana Pay</span>
               </div>
             </div>
           </div>

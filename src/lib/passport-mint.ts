@@ -8,6 +8,7 @@ import {
   buildCertificateId,
   buildPassportMetadataBundle,
 } from './passport-metadata'
+import { persistDppStorage } from './dpp-storage'
 import {
   Connection,
   Keypair,
@@ -288,8 +289,15 @@ export async function issueProductPassport(
   input: PassportIssueInput,
   signerProvider?: SignerProvider | null
 ): Promise<ProductPassportCertificate> {
-  const { metadataHash, metadataUri, dpp } = await buildPassportMetadataBundle(input)
   const certificateId = buildCertificateId(input.ownerAddress, input.paymentSignature)
+  const { metadataJson, metadataHash, metadataUri, dpp } = await buildPassportMetadataBundle(input)
+  const storage = await persistDppStorage({
+    certificateId,
+    ownerAddress: input.ownerAddress,
+    metadataJson,
+    metadataHash,
+    defaultMetadataUri: metadataUri,
+  })
 
   let mintAddress: string | undefined
   let mintSignature: string | undefined
@@ -303,7 +311,12 @@ export async function issueProductPassport(
     const strategy = getResolvedMintStrategy()
     if (strategy === 'candy_machine') {
       try {
-        const candyResult = await issueWithCandyMachine(input, metadataUri, metadataHash, dpp)
+        const candyResult = await issueWithCandyMachine(
+          input,
+          storage.metadataUri,
+          storage.metadataHash,
+          dpp
+        )
         mintAddress = candyResult.mintAddress
         mintSignature = candyResult.mintSignature
         issuanceMethod = candyResult.issuanceMethod
@@ -312,13 +325,13 @@ export async function issueProductPassport(
           throw error
         }
 
-        const directResult = await issueWithDirectMint(input, signerProvider, metadataUri, dpp)
+        const directResult = await issueWithDirectMint(input, signerProvider, storage.metadataUri, dpp)
         mintAddress = directResult.mintAddress
         mintSignature = directResult.mintSignature
         issuanceMethod = directResult.issuanceMethod
       }
     } else {
-      const directResult = await issueWithDirectMint(input, signerProvider, metadataUri, dpp)
+      const directResult = await issueWithDirectMint(input, signerProvider, storage.metadataUri, dpp)
       mintAddress = directResult.mintAddress
       mintSignature = directResult.mintSignature
       issuanceMethod = directResult.issuanceMethod
@@ -333,14 +346,15 @@ export async function issueProductPassport(
     certificateId,
     status: 'issued',
     ownerAddress: input.ownerAddress,
-    metadataUri,
-    metadataHash,
+    metadataUri: storage.metadataUri,
+    metadataHash: storage.metadataHash,
     mintAddress,
     mintSignature,
     paymentSignature: input.paymentSignature,
     network: SOLANA_CONFIG.PASSPORT.NETWORK,
     issuedAt: new Date().toISOString(),
     issuanceMethod,
+    dppStorage: storage,
     dpp,
   }
 
