@@ -27,7 +27,8 @@ import { SOLANA_CONFIG, validateMerchantWallet } from '../config/solana'
  */
 export async function createUSDCTransferTransaction(
   payerAddress: string,
-  amount: number
+  amount: number,
+  recipientWalletAddress: string = SOLANA_CONFIG.MERCHANT_WALLET
 ): Promise<Transaction | null> {
   // Validate merchant wallet is configured
   if (!validateMerchantWallet()) {
@@ -38,7 +39,7 @@ export async function createUSDCTransferTransaction(
     const connection = new Connection(SOLANA_CONFIG.RPC_ENDPOINT, 'confirmed')
     
     const payerPublicKey = new PublicKey(payerAddress)
-    const merchantPublicKey = new PublicKey(SOLANA_CONFIG.MERCHANT_WALLET)
+    const merchantPublicKey = new PublicKey(recipientWalletAddress)
     const usdcMintPublicKey = new PublicKey(SOLANA_CONFIG.USDC_MINT)
 
     // Get the sender's USDC Associated Token Account (ATA)

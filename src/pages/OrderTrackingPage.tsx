@@ -1,9 +1,18 @@
+import { useMemo, useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Card } from '../components/Card'
 import { Button } from '../components/Button'
 import { ProductPassportCard } from '../components/ProductPassportCard'
 import type { ProductPassportCertificate } from '../types/passport'
 import { getPersistedCertificate } from '../lib/passport-mint'
+import {
+  autoReleaseExpiredEscrowOrder,
+  confirmEscrowOrderReceipt,
+  getEscrowOrderById,
+  getEscrowOrderBySignature,
+  openEscrowDispute,
+} from '../lib/escrow'
+
 
 export function OrderTrackingPage() {
   const location = useLocation()
@@ -11,9 +20,46 @@ export function OrderTrackingPage() {
   
   const signature = location.state?.signature as string
   const total = location.state?.total as number
+  const escrowOrderId = location.state?.escrowOrderId as string | undefined
   const stateCertificate = location.state?.passportCertificate as ProductPassportCertificate | undefined
   const persistedCertificate = getPersistedCertificate()
   const passportCertificate = stateCertificate ?? persistedCertificate
+  const [refreshTick, setRefreshTick] = useState(0)
+
+
+
+  const escrowOrder = useMemo(() => {
+    const byId = escrowOrderId ? getEscrowOrderById(escrowOrderId) : null
+    if (byId) {
+      return byId
+    }
+    if (signature) {
+      return getEscrowOrderBySignature(signature)
+    }
+    return null
+  }, [escrowOrderId, signature])
+
+  const refreshEscrowOrder = () => setRefreshTick((value) => value + 1)
+
+  const handleConfirmReceipt = () => {
+    if (!escrowOrder) return
+    confirmEscrowOrderReceipt(escrowOrder.id)
+    refreshEscrowOrder()
+  }
+
+  const handleOpenDispute = () => {
+    if (!escrowOrder) return
+    const reason = window.prompt('Please describe the issue with your order:')
+    if (!reason) return
+    openEscrowDispute(escrowOrder.id, reason)
+    refreshEscrowOrder()
+  }
+
+  const handleTimeoutReleaseCheck = () => {
+    if (!escrowOrder) return
+    autoReleaseExpiredEscrowOrder(escrowOrder.id)
+    refreshEscrowOrder()
+  }
 
   if (!signature) {
     return (
@@ -75,9 +121,48 @@ export function OrderTrackingPage() {
 
               <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
                 <p className="text-sm text-emerald-200">
-                  ✅ Your USDC payment has been confirmed and is now on the blockchain!
+                  ✅ Your USDC payment is confirmed and currently held in escrow until release conditions are met.
                 </p>
               </div>
+
+              {escrowOrder ? (
+                <div className="mb-6 p-4 bg-primary/10 border border-primary/30 rounded-lg">
+                  <p className="text-sm font-semibold mb-2">Escrow Status</p>
+                  <div className="space-y-1 text-xs text-muted-foreground">
+                    <p>Order ID: <span className="font-mono text-foreground break-all">{escrowOrder.id}</span></p>
+                    <p>Status: <span className="font-semibold text-foreground">{escrowOrder.status.replace(/_/g, ' ')}</span></p>
+                    <p>Release timeout: {new Date(escrowOrder.releaseAt).toLocaleString()}</p>
+                    <p>Dispute window ends: {new Date(escrowOrder.disputeWindowEndsAt).toLocaleString()}</p>
+                    {escrowOrder.disputeReason ? <p>Dispute reason: {escrowOrder.disputeReason}</p> : null}
+                  </div>
+
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <Button
+                      onClick={handleConfirmReceipt}
+                      size="sm"
+                      disabled={escrowOrder.status === 'released' || escrowOrder.status === 'refunded'}
+                    >
+                      Confirm Received
+                    </Button>
+                    <Button
+                      onClick={handleOpenDispute}
+                      variant="outline"
+                      size="sm"
+                      disabled={escrowOrder.status === 'released' || escrowOrder.status === 'refunded'}
+                    >
+                      Open Dispute
+                    </Button>
+                    <Button
+                      onClick={handleTimeoutReleaseCheck}
+                      variant="secondary"
+                      size="sm"
+                      disabled={escrowOrder.status === 'released' || escrowOrder.status === 'refunded'}
+                    >
+                      Check Timeout Release
+                    </Button>
+                  </div>
+                </div>
+              ) : null}
 
               <div className="flex gap-4">
                 <Button onClick={() => navigate('/shop')} className="flex-1">

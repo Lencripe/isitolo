@@ -7,6 +7,10 @@ import {
   sendUSDCTransferTransaction,
   checkUSDCBalance,
 } from '../lib/usdc-transfer'
+import {
+  createEscrowOrder,
+  markEscrowOrderFunded,
+} from '../lib/escrow'
 import { issueProductPassport } from '../lib/passport-mint'
 import { SOLANA_CONFIG } from '../config/solana'
 import { Card } from '../components/Card'
@@ -27,6 +31,7 @@ export function CheckoutPage() {
   const { wallet, status } = useWalletConnection()
   const [loading, setLoading] = useState(false)
   const [txSignature, setTxSignature] = useState<string>('')
+  const [escrowOrderId, setEscrowOrderId] = useState<string>('')
   const [passportCertificate, setPassportCertificate] = useState<ProductPassportCertificate | null>(null)
   const [error, setError] = useState<string>('')
   const [walletBalance, setWalletBalance] = useState<number | null>(null)
@@ -108,9 +113,23 @@ export function CheckoutPage() {
 
       // Create the USDC transfer transaction
       const payableTotal = getPayableTotal()
+
+      const escrowOrder = createEscrowOrder({
+        buyerWallet: wallet.account.address.toString(),
+        amountUsdc: payableTotal,
+        products: cartItems.map((item) => ({
+          id: item.product.id,
+          name: item.product.name,
+          quantity: item.quantity,
+          unitPriceUsdc: item.product.price,
+        })),
+      })
+      setEscrowOrderId(escrowOrder.id)
+
       const transaction = await createUSDCTransferTransaction(
         wallet.account.address.toString(),
-        payableTotal
+        payableTotal,
+        SOLANA_CONFIG.ESCROW.VAULT_WALLET
       )
 
       if (!transaction) {
@@ -191,6 +210,8 @@ export function CheckoutPage() {
         signedTransaction
       )
 
+      markEscrowOrderFunded(escrowOrder.id, signature)
+
       setTxSignature(signature)
       console.log('✅ Payment successful:', signature)
 
@@ -236,10 +257,16 @@ export function CheckoutPage() {
       setPassportCertificate(certificate)
       console.log('🪪 Product passport issued:', certificate.certificateId)
 
+
       // Navigate to success page after 2 seconds
       setTimeout(() => {
         navigate('/order-tracking', {
-          state: { signature, total: getTotalPrice(), passportCertificate: certificate },
+          state: {
+            signature,
+            total: getTotalPrice(),
+            passportCertificate: certificate,
+            escrowOrderId: escrowOrder.id,
+          },
         })
       }, 2000)
     } catch (err: any) {
@@ -418,6 +445,11 @@ export function CheckoutPage() {
                       >
                         {txSignature}
                       </a>
+                      {escrowOrderId ? (
+                        <p className="mt-2 text-xs text-emerald-300 break-all">
+                          Escrow order: {escrowOrderId}
+                        </p>
+                      ) : null}
                     </div>
                   )}
 

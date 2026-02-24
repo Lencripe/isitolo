@@ -42,6 +42,15 @@ export const SOLANA_CONFIG = {
   // Token decimals (USDC uses 6 decimals)
   USDC_DECIMALS: 6,
 
+  ESCROW: {
+    ENABLED: true,
+    API_BASE_URL: (import.meta.env.VITE_ESCROW_API_BASE_URL || '').replace(/\/$/, ''),
+    VAULT_WALLET: import.meta.env.VITE_ESCROW_VAULT_WALLET || 'FciDCLGLaCDaFfYyf3jwH4hRbkNQsF1HrroNUVuR2EEH',
+    ADMIN_AUTHORITY_WALLET: import.meta.env.VITE_ESCROW_ADMIN_WALLET || 'FciDCLGLaCDaFfYyf3jwH4hRbkNQsF1HrroNUVuR2EEH',
+    RELEASE_TIMEOUT_HOURS: Number(import.meta.env.VITE_ESCROW_RELEASE_TIMEOUT_HOURS || 72),
+    DISPUTE_WINDOW_HOURS: Number(import.meta.env.VITE_ESCROW_DISPUTE_WINDOW_HOURS || 168),
+  },
+
   REWARDS: {
     ENABLED: true,
     POINTS_PER_USDC: 10,
