@@ -231,6 +231,23 @@ npm run preview    # Preview production build
 npm run lint       # Run ESLint
 ```
 
+## Phase 2 Escrow Scaffolds
+
+### Escrow API
+
+```bash
+cd services/escrow-api
+npm install
+npm run dev
+```
+
+### Anchor Scaffold Path Notes
+
+- Anchor workspace root: `programs/escrow-anchor`
+- Anchor config: `programs/escrow-anchor/Anchor.toml`
+- Program crate: `programs/escrow-anchor/programs/istolo_escrow`
+- Program source entry: `programs/escrow-anchor/programs/istolo_escrow/src/lib.rs`
+
 ## Deployment
 
 ### Vercel (Recommended)

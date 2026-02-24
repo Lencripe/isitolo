@@ -80,3 +80,9 @@ export type {
   ProductPassportCertificate,
   PassportIssueInput,
 } from './passport'
+
+export type {
+  EscrowOrderStatus,
+  EscrowOrderProduct,
+  EscrowOrder,
+} from './escrow'
