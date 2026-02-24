@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Card } from '../components/Card'
 import { Button } from '../components/Button'
@@ -37,7 +37,7 @@ export function OrderTrackingPage() {
       return getEscrowOrderBySignature(signature)
     }
     return null
-  }, [escrowOrderId, signature])
+  }, [escrowOrderId, signature, refreshTick])
 
   const refreshEscrowOrder = () => setRefreshTick((value) => value + 1)
 
