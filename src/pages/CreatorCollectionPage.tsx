@@ -1,14 +1,23 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
+import { useWalletConnection } from '@solana/react-hooks'
 import { Card } from '../components/Card'
 import { Button } from '../components/Button'
 import {
+  createCreatorCollectionOnchain,
+  deleteCreatorCollectionOnchain,
+  fetchCreatorCollections,
   loadCreatorCollections,
   saveCreatorCollections,
   type CreatorCollection,
   type CreatorCollectionCategory,
   type CreatorCollectionItem,
 } from '../lib/creator-collections'
+import {
+  getDropMintStatsEventName,
+  getMintedCountForItem,
+  getRemainingSupply,
+} from '../lib/drop-mint-stats'
 
 function toId(value: string): string {
   return value
@@ -19,6 +28,7 @@ function toId(value: string): string {
 }
 
 export function CreatorCollectionPage() {
+  const { wallet, status } = useWalletConnection()
   const [name, setName] = useState('')
   const [category, setCategory] = useState<CreatorCollectionCategory>('clothing')
   const [description, setDescription] = useState('')
@@ -33,8 +43,40 @@ export function CreatorCollectionPage() {
 
   const [savedCollections, setSavedCollections] = useState<CreatorCollection[]>(() => loadCreatorCollections())
   const [message, setMessage] = useState('')
+  const [mintStatsVersion, setMintStatsVersion] = useState(0)
 
   const itemCount = useMemo(() => items.length, [items])
+
+  useEffect(() => {
+    let cancelled = false
+
+    const hydrateCollections = async () => {
+      const collections = await fetchCreatorCollections()
+      if (!cancelled) {
+        setSavedCollections(collections)
+      }
+    }
+
+    void hydrateCollections()
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  useEffect(() => {
+    const eventName = getDropMintStatsEventName()
+    const handleMintStatsUpdate = () => {
+      setMintStatsVersion((value) => value + 1)
+    }
+
+    window.addEventListener(eventName, handleMintStatsUpdate)
+    window.addEventListener('storage', handleMintStatsUpdate)
+    return () => {
+      window.removeEventListener(eventName, handleMintStatsUpdate)
+      window.removeEventListener('storage', handleMintStatsUpdate)
+    }
+  }, [])
 
   const addItem = (event: FormEvent) => {
     event.preventDefault()
@@ -64,7 +106,63 @@ export function CreatorCollectionPage() {
     setItems((prev) => prev.filter((item) => item.id !== id))
   }
 
-  const saveCollection = (event: FormEvent) => {
+  const resolveWalletSignerProvider = (walletAddress: string) => {
+    const availableProviders = [
+      (window as any).backpack,
+      (window as any).solana,
+      (window as any).solflare,
+      (window as any).coinbaseSolana,
+    ]
+
+    return (
+      availableProviders.find((provider) => provider?.publicKey?.toString?.() === walletAddress)
+      || availableProviders.find((provider) => provider?.signTransaction)
+    )
+  }
+
+  const removeCollection = async (collection: CreatorCollection) => {
+    setMessage('')
+
+    const localNext = savedCollections.filter((entry) => entry.id !== collection.id)
+
+    if (!wallet || status !== 'connected') {
+      setSavedCollections(localNext)
+      saveCreatorCollections(localNext)
+      setMessage('Collection removed locally. Connect wallet to remove it on-chain too.')
+      return
+    }
+
+    const walletAddress = wallet.account.address.toString()
+    const signerProvider = resolveWalletSignerProvider(walletAddress)
+    if (!signerProvider?.signTransaction) {
+      setSavedCollections(localNext)
+      saveCreatorCollections(localNext)
+      setMessage('Collection removed locally. Could not resolve wallet signer provider for on-chain removal.')
+      return
+    }
+
+    try {
+      const { signature } = await deleteCreatorCollectionOnchain({
+        collectionId: collection.id,
+        ownerAddress: walletAddress,
+        signerProvider,
+      })
+
+      const onchainCollections = await fetchCreatorCollections()
+      const next = onchainCollections.filter((entry) => entry.id !== collection.id)
+      setSavedCollections(next)
+      saveCreatorCollections(next)
+      setMessage(`Collection removed from website and chain. Tx: ${signature}`)
+    } catch (error: any) {
+      setSavedCollections(localNext)
+      saveCreatorCollections(localNext)
+      setMessage(
+        `On-chain removal failed, removed locally instead: ${error?.message || 'Unknown error'}`
+      )
+    }
+  }
+
+  const saveCollection = async (event: FormEvent) => {
     event.preventDefault()
     setMessage('')
 
@@ -83,6 +181,19 @@ export function CreatorCollectionPage() {
       return
     }
 
+    if (!wallet || status !== 'connected') {
+      setMessage('Connect your wallet to create a collection on-chain.')
+      return
+    }
+
+    const v1Address = wallet.account.address.toString()
+    const signerProvider = resolveWalletSignerProvider(v1Address)
+
+    if (!signerProvider?.signTransaction) {
+      setMessage('Unable to resolve a wallet signer provider. Please reconnect your wallet.')
+      return
+    }
+
     const collection: CreatorCollection = {
       id: `${toId(name)}-${Date.now().toString(36)}`,
       name: name.trim(),
@@ -92,19 +203,36 @@ export function CreatorCollectionPage() {
       royaltyBps: Number(royaltyBps),
       createdAt: new Date().toISOString(),
       items,
+      authority: v1Address,
     }
 
-    const next = [collection, ...savedCollections]
-    setSavedCollections(next)
-    saveCreatorCollections(next)
+    try {
+      const { signature } = await createCreatorCollectionOnchain({
+        collection,
+        ownerAddress: v1Address,
+        signerProvider,
+      })
 
-    setName('')
-    setCategory('clothing')
-    setDescription('')
-    setCoverImageUrl('')
-    setRoyaltyBps(500)
-    setItems([])
-    setMessage('Collection created and saved locally. You can now use it for drops and mint flows.')
+      const onchainCollections = await fetchCreatorCollections()
+      const next = onchainCollections.length > 0 ? onchainCollections : [collection, ...savedCollections]
+      setSavedCollections(next)
+      saveCreatorCollections(next)
+
+      setName('')
+      setCategory('clothing')
+      setDescription('')
+      setCoverImageUrl('')
+      setRoyaltyBps(500)
+      setItems([])
+      setMessage(`Collection saved on-chain. Tx: ${signature}`)
+    } catch (error: any) {
+      const fallback = [collection, ...savedCollections]
+      saveCreatorCollections(fallback)
+      setSavedCollections(fallback)
+      setMessage(
+        `On-chain save failed, stored locally instead: ${error?.message || 'Unknown error'}`
+      )
+    }
   }
 
   return (
@@ -234,7 +362,7 @@ export function CreatorCollectionPage() {
               </Card>
 
               {message ? (
-                <p className="text-sm text-emerald-300">{message}</p>
+                <p className="text-sm text-emerald-300 break-all">{message}</p>
               ) : null}
 
               <Button type="submit" className="w-full">
@@ -249,19 +377,48 @@ export function CreatorCollectionPage() {
               {savedCollections.length === 0 ? (
                 <p className="text-muted-foreground">No collections yet. Create your first one on the left.</p>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-4" key={`mint-stats-${mintStatsVersion}`}>
                   {savedCollections.map((collection) => (
                     <Card key={collection.id} className="bg-muted/40">
                       <div className="p-4">
                         <div className="flex justify-between items-start gap-3 mb-2">
                           <h3 className="font-bold text-lg">{collection.name}</h3>
-                          <span className="text-xs px-2 py-1 rounded bg-primary/15 text-primary">
-                            {collection.category === 'clothing' ? 'Clothing' : 'Printable Artworks'}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs px-2 py-1 rounded bg-primary/15 text-primary">
+                              {collection.category === 'clothing' ? 'Clothing' : 'Printable Artworks'}
+                            </span>
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => void removeCollection(collection)}
+                            >
+                              Remove Drop
+                            </Button>
+                          </div>
                         </div>
                         <p className="text-sm text-muted-foreground mb-2">{collection.description}</p>
                         <p className="text-xs text-muted-foreground mb-1">Items: {collection.items.length}</p>
+                        <p className="text-xs text-muted-foreground mb-1">
+                          Minted: {collection.items.reduce((sum, item) => sum + getMintedCountForItem(item.id), 0)} /
+                          {' '}
+                          {collection.items.reduce((sum, item) => sum + item.maxSupply, 0)}
+                        </p>
+                        <p className="text-xs text-muted-foreground mb-1">
+                          Left: {collection.items.reduce((sum, item) => sum + getRemainingSupply(item.id, item.maxSupply), 0)}
+                        </p>
                         <p className="text-xs text-muted-foreground mb-1">Royalty: {collection.royaltyBps} bps</p>
+                        <div className="mt-2 space-y-1">
+                          {collection.items.map((item) => {
+                            const minted = getMintedCountForItem(item.id)
+                            const remaining = getRemainingSupply(item.id, item.maxSupply)
+                            return (
+                              <p key={item.id} className="text-xs text-muted-foreground">
+                                {item.title}: {minted}/{item.maxSupply} minted · {remaining} left
+                              </p>
+                            )
+                          })}
+                        </div>
                         <p className="text-xs text-muted-foreground">Created: {new Date(collection.createdAt).toLocaleString()}</p>
                       </div>
                     </Card>

@@ -6,6 +6,7 @@ import { CheckoutPage } from './pages/CheckoutPage'
 import { OrderTrackingPage } from './pages/OrderTrackingPage'
 import { CreatorCollectionPage } from './pages/CreatorCollectionPage'
 import { PassportVerifyPage } from './pages/PassportVerifyPage'
+import { ProductDetailPage } from './pages/ProductDetailPage'
 import { Header } from './components/Header'
 
 function AnimatedRoutes() {
@@ -23,6 +24,7 @@ function AnimatedRoutes() {
         <Routes location={location}>
           <Route path="/" element={<LandingPage />} />
           <Route path="/shop" element={<ShopPage />} />
+          <Route path="/products/:slug" element={<ProductDetailPage />} />
           <Route path="/creator/collections" element={<CreatorCollectionPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/order-tracking" element={<OrderTrackingPage />} />

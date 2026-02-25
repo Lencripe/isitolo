@@ -4,11 +4,17 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Card } from '../components/Card'
 import { Button } from '../components/Button'
 import {
-  loadCreatorCollections,
+  fetchCreatorCollections,
   type CreatorCollection,
   type CreatorCollectionItem,
 } from '../lib/creator-collections'
+import { SHOP_PRODUCTS } from '../lib/shop-products'
 import { loadCart, saveCart, type StoredCartItem } from '../lib/cart'
+import {
+  getDropMintStatsEventName,
+  getMintedCountForItem,
+  getRemainingSupply,
+} from '../lib/drop-mint-stats'
 
 interface Product {
   id: string
@@ -21,44 +27,47 @@ interface Product {
   sourceItemId?: string
 }
 
-const PRODUCTS: Product[] = [
-  {
-    id: '1',
-    name: 'Premium T-Shirt',
-    description: 'High-quality cotton t-shirt with custom design',
-    price: 25,
-    image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400',
-  },
-  {
-    id: '2',
-    name: 'Hoodie',
-    description: 'Comfortable hoodie perfect for any weather',
-    price: 45,
-    image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400',
-  },
-  {
-    id: '3',
-    name: 'Cap',
-    description: 'Stylish cap with embroidered logo',
-    price: 15,
-    image: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=400',
-  },
-  {
-    id: '4',
-    name: 'Backpack',
-    description: 'Durable backpack with multiple compartments',
-    price: 60,
-    image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400',
-  },
-]
+const PRODUCTS: Product[] = SHOP_PRODUCTS
 
 export function ShopPage() {
   const [cart, setCart] = useState<StoredCartItem[]>(() => loadCart())
-  const [creatorCollections] = useState<CreatorCollection[]>(() => loadCreatorCollections())
+  const [creatorCollections, setCreatorCollections] = useState<CreatorCollection[]>([])
+  const [mintStatsVersion, setMintStatsVersion] = useState(0)
 
   useEffect(() => {
     saveCart(cart)
   }, [cart])
+
+  useEffect(() => {
+    let cancelled = false
+
+    const hydrateCreatorCollections = async () => {
+      const collections = await fetchCreatorCollections()
+      if (!cancelled) {
+        setCreatorCollections(collections)
+      }
+    }
+
+    void hydrateCreatorCollections()
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  useEffect(() => {
+    const eventName = getDropMintStatsEventName()
+    const handleMintStatsUpdate = () => {
+      setMintStatsVersion((value) => value + 1)
+    }
+
+    window.addEventListener(eventName, handleMintStatsUpdate)
+    window.addEventListener('storage', handleMintStatsUpdate)
+    return () => {
+      window.removeEventListener(eventName, handleMintStatsUpdate)
+      window.removeEventListener('storage', handleMintStatsUpdate)
+    }
+  }, [])
 
   const addToCart = (product: Product) => {
     setCart((prev) => {
@@ -226,7 +235,7 @@ export function ShopPage() {
           </div>
         </div>
 
-        <div className="mt-10">
+        <div className="mt-10" key={`mint-stats-${mintStatsVersion}`}>
           <motion.div
             className="flex items-center justify-between mb-4"
             initial={{ opacity: 0, y: 16 }}
@@ -270,6 +279,12 @@ export function ShopPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {collection.items.map((item, itemIndex) => (
+                        (() => {
+                          const minted = getMintedCountForItem(item.id)
+                          const remaining = getRemainingSupply(item.id, item.maxSupply)
+                          const isSoldOut = remaining === 0
+
+                          return (
                         <motion.div
                           key={item.id}
                           initial={{ opacity: 0, y: 14 }}
@@ -282,18 +297,21 @@ export function ShopPage() {
                           <div className="p-4">
                             <h4 className="font-semibold mb-1">{item.title}</h4>
                             <p className="text-xs text-muted-foreground mb-2">{item.sku}</p>
-                            <p className="text-xs text-muted-foreground mb-3">Max supply: {item.maxSupply}</p>
+                            <p className="text-xs text-muted-foreground mb-1">Minted: {minted} / {item.maxSupply}</p>
+                            <p className="text-xs text-muted-foreground mb-3">Left: {remaining}</p>
                             <div className="flex items-center justify-between">
                               <span className="text-lg font-bold text-primary">
                                 {item.basePriceUsdc} USDC
                               </span>
-                              <Button size="sm" onClick={() => addDropItemToCart(collection, item)}>
-                                Buy Drop
+                              <Button size="sm" onClick={() => addDropItemToCart(collection, item)} disabled={isSoldOut}>
+                                {isSoldOut ? 'Sold Out' : 'Buy Drop'}
                               </Button>
                             </div>
                           </div>
                           </Card>
                         </motion.div>
+                          )
+                        })()
                       ))}
                     </div>
                   </div>

@@ -2,41 +2,7 @@
 import { Link } from 'react-router-dom'
 import { Button } from './Button'
 import { motion } from 'framer-motion'
-
-const products = [
-  {
-    id: 1,
-    name: 'Void Walker Hoodie',
-    brand: 'Dammed Saint',
-    price: '$180',
-    image: 'https://images.unsplash.com/photo-1649962843028-54905316eb21?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-    tags: ['NFT', 'NFC'],
-  },
-  {
-    id: 2,
-    name: 'Origin Oversized Tee',
-    brand: 'Dammed Saint',
-    price: '$85',
-    image: 'https://images.unsplash.com/photo-1562135291-7728cc647783?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-    tags: ['NFT'],
-  },
-  {
-    id: 3,
-    name: 'Shadow Cap',
-    brand: 'Dammed Saint',
-    price: '$60',
-    image: 'https://images.unsplash.com/photo-1742473716872-ff82599f90db?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-    tags: ['NFC'],
-  },
-  {
-    id: 4,
-    name: 'Kente Bomber',
-    brand: 'Afrofuture',
-    price: '$240',
-    image: 'https://images.unsplash.com/photo-1660695828374-4ff51ac9df5d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-    tags: ['NFT', 'NFC'],
-  },
-]
+import { HOME_PRODUCTS } from '../lib/home-products'
 
 export function ProductsSection() {
   return (
@@ -66,7 +32,7 @@ export function ProductsSection() {
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {products.map((product, index) => (
+          {HOME_PRODUCTS.map((product, index) => (
             <motion.div
               key={product.id}
               className="overflow-hidden rounded-2xl border border-border/60 bg-card/70 flex flex-col"
@@ -100,7 +66,7 @@ export function ProductsSection() {
                 </div>
                 <div className="mt-auto flex items-center justify-between">
                   <span className="text-lg font-semibold text-primary">{product.price}</span>
-                  <Link to="/shop">
+                  <Link to={`/products/${product.slug}`}>
                     <Button size="sm" className="uppercase tracking-[0.2em] text-[10px]">
                       View Product
                     </Button>
