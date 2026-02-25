@@ -1,6 +1,7 @@
 
 import { Link } from 'react-router-dom'
 import { Button } from './Button'
+import { motion } from 'framer-motion'
 
 const products = [
   {
@@ -41,7 +42,13 @@ export function ProductsSection() {
   return (
     <section id="products" className="py-20 md:py-28 border-t border-border/50">
       <div className="container max-w-7xl px-4 mx-auto">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-12">
+        <motion.div
+          className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-12"
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.25 }}
+          transition={{ duration: 0.55, ease: 'easeOut' }}
+        >
           <div className="space-y-3">
             <p className="text-xs font-semibold uppercase tracking-[0.45em] text-muted-foreground">Latest drops</p>
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
@@ -56,16 +63,26 @@ export function ProductsSection() {
               View All
             </Button>
           </Link>
-        </div>
+        </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {products.map((product) => (
-            <div key={product.id} className="overflow-hidden rounded-2xl border border-border/60 bg-card/70 flex flex-col">
+          {products.map((product, index) => (
+            <motion.div
+              key={product.id}
+              className="overflow-hidden rounded-2xl border border-border/60 bg-card/70 flex flex-col"
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.45, delay: index * 0.07, ease: 'easeOut' }}
+              whileHover={{ y: -8 }}
+            >
               <div className="relative h-56 overflow-hidden">
-                <img
+                <motion.img
                   src={product.image}
                   alt={product.name}
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  whileHover={{ scale: 1.06 }}
+                  transition={{ duration: 0.35 }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
               </div>
@@ -90,7 +107,7 @@ export function ProductsSection() {
                   </Link>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

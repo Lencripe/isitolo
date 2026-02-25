@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { AnimatePresence, motion } from 'framer-motion'
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import { LandingPage } from './pages/LandingPage'
 import { ShopPage } from './pages/ShopPage'
 import { CheckoutPage } from './pages/CheckoutPage'
@@ -7,18 +8,36 @@ import { CreatorCollectionPage } from './pages/CreatorCollectionPage'
 import { PassportVerifyPage } from './pages/PassportVerifyPage'
 import { Header } from './components/Header'
 
+function AnimatedRoutes() {
+  const location = useLocation()
+
+  return (
+    <AnimatePresence mode="wait" initial={false}>
+      <motion.main
+        key={location.pathname}
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -8 }}
+        transition={{ duration: 0.26, ease: 'easeOut' }}
+      >
+        <Routes location={location}>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/shop" element={<ShopPage />} />
+          <Route path="/creator/collections" element={<CreatorCollectionPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/order-tracking" element={<OrderTrackingPage />} />
+          <Route path="/verify" element={<PassportVerifyPage />} />
+        </Routes>
+      </motion.main>
+    </AnimatePresence>
+  )
+}
+
 function App() {
   return (
     <Router>
       <Header />
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/shop" element={<ShopPage />} />
-        <Route path="/creator/collections" element={<CreatorCollectionPage />} />
-        <Route path="/checkout" element={<CheckoutPage />} />
-        <Route path="/order-tracking" element={<OrderTrackingPage />} />
-        <Route path="/verify" element={<PassportVerifyPage />} />
-      </Routes>
+      <AnimatedRoutes />
     </Router>
   )
 }

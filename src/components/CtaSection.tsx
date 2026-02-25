@@ -2,12 +2,19 @@
 import { Link } from 'react-router-dom'
 import { Button } from './Button'
 import { ArrowRight } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 export function CtaSection() {
   return (
     <section className="py-20 md:py-28 border-t border-border/50" id="about">
       <div className="container max-w-6xl px-4 mx-auto">
-        <div className="border border-border/60 rounded-3xl p-8 md:p-16 bg-card/70">
+        <motion.div
+          className="border border-border/60 rounded-3xl p-8 md:p-16 bg-card/70"
+          initial={{ opacity: 0, y: 26 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.25 }}
+          transition={{ duration: 0.55, ease: 'easeOut' }}
+        >
           <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-10 items-center">
             <div className="space-y-5">
               <p className="text-xs font-semibold uppercase tracking-[0.45em] text-muted-foreground">For creators</p>
@@ -28,7 +35,11 @@ export function CtaSection() {
                 </Button>
               </div>
             </div>
-            <div className="border border-border/60 rounded-2xl p-6 bg-background/60">
+            <motion.div
+              className="border border-border/60 rounded-2xl p-6 bg-background/60"
+              whileHover={{ y: -6 }}
+              transition={{ duration: 0.25 }}
+            >
               <h3 className="text-2xl font-bold mb-3">Istolo</h3>
               <p className="text-sm text-muted-foreground mb-4">
                 The first African Web3 fashion marketplace. Verify authenticity, own your style, and trade on-chain.
@@ -41,9 +52,9 @@ export function CtaSection() {
                   <Link to="/creator/collections" className="hover:text-foreground transition">Creators</Link>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   )
