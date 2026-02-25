@@ -4,6 +4,9 @@
 
 @layer base {
   :root {
+    --brand-cyan: 187 100% 42%;
+    --brand-green: 122 39% 49%;
+
     --background: 210 70% 96%;
     --foreground: 216 44% 16%;
 
@@ -13,7 +16,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 216 38% 18%;
 
-    --primary: 211 90% 47%;
+    --primary: var(--brand-cyan);
     --primary-foreground: 0 0% 100%;
 
     --secondary: 210 82% 88%;
@@ -22,7 +25,7 @@
     --muted: 210 55% 92%;
     --muted-foreground: 216 20% 36%;
 
-    --accent: 202 92% 58%;
+    --accent: var(--brand-green);
     --accent-foreground: 216 42% 16%;
 
     --destructive: 0 72% 48%;
@@ -30,12 +33,15 @@
 
     --border: 212 34% 82%;
     --input: 212 34% 82%;
-    --ring: 211 90% 47%;
+    --ring: var(--brand-cyan);
 
     --radius: 1rem;
   }
 
   .dark {
+    --brand-cyan: 187 100% 48%;
+    --brand-green: 122 39% 56%;
+
     --background: 220 34% 9%;
     --foreground: 0 0% 98%;
 
@@ -45,7 +51,7 @@
     --popover: 220 28% 13%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 207 94% 61%;
+    --primary: var(--brand-cyan);
     --primary-foreground: 0 0% 7%;
 
     --secondary: 220 24% 20%;
@@ -54,7 +60,7 @@
     --muted: 220 20% 16%;
     --muted-foreground: 0 0% 72%;
 
-    --accent: 199 90% 64%;
+    --accent: var(--brand-green);
     --accent-foreground: 0 0% 7%;
 
     --destructive: 0 72% 52%;
@@ -62,7 +68,7 @@
 
     --border: 220 18% 24%;
     --input: 220 18% 24%;
-    --ring: 207 94% 61%;
+    --ring: var(--brand-cyan);
   }
 }
 

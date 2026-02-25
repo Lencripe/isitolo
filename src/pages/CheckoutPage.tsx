@@ -16,8 +16,9 @@ import { SOLANA_CONFIG } from '../config/solana'
 import { Card } from '../components/Card'
 import { Button } from '../components/Button'
 import type { ProductPassportCertificate } from '../types/passport'
-import { loadCreatorCollections, type CreatorCollection } from '../lib/creator-collections'
+import { fetchCreatorCollections, type CreatorCollection } from '../lib/creator-collections'
 import { loadCart, saveCart, type StoredCartItem } from '../lib/cart'
+import { applyDropMintStatsForPurchase } from '../lib/drop-mint-stats'
 import {
   applyRewardsForPurchase,
   calculateRedeemablePoints,
@@ -64,13 +65,27 @@ export function CheckoutPage() {
   }, [wallet, status])
 
   useEffect(() => {
-    const collections = loadCreatorCollections()
-    setCreatorCollections(collections)
-    if (collections.length > 0) {
-      const preferred = cartCollectionId
-        ? collections.find((collection) => collection.id === cartCollectionId)
-        : undefined
-      setSelectedCollectionId(preferred?.id || collections[0].id)
+    let cancelled = false
+
+    const hydrateCollections = async () => {
+      const collections = await fetchCreatorCollections()
+      if (cancelled) {
+        return
+      }
+
+      setCreatorCollections(collections)
+      if (collections.length > 0) {
+        const preferred = cartCollectionId
+          ? collections.find((collection) => collection.id === cartCollectionId)
+          : undefined
+        setSelectedCollectionId(preferred?.id || collections[0].id)
+      }
+    }
+
+    void hydrateCollections()
+
+    return () => {
+      cancelled = true
     }
   }, [cartCollectionId])
 
@@ -211,6 +226,7 @@ export function CheckoutPage() {
       )
 
       markEscrowOrderFunded(escrowOrder.id, signature)
+      applyDropMintStatsForPurchase(signature, cartItems)
 
       setTxSignature(signature)
       console.log('✅ Payment successful:', signature)

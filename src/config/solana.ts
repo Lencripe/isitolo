@@ -57,6 +57,12 @@ export const SOLANA_CONFIG = {
     REDEEM_USDC_PER_POINT: 0.01,
   },
 
+  COLLECTIONS: {
+    ENABLED: import.meta.env.VITE_COLLECTIONS_ONCHAIN_ENABLED !== 'false',
+    PROGRAM_ID: import.meta.env.VITE_COLLECTIONS_PROGRAM_ID || '',
+    FALLBACK_TO_LOCAL: import.meta.env.VITE_COLLECTIONS_FALLBACK_TO_LOCAL !== 'false',
+  },
+
   PASSPORT: {
     NETWORK: 'devnet' as const,
     MINT_STRATEGY: 'auto' as 'auto' | 'direct' | 'candy_machine',
