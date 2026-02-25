@@ -4,65 +4,65 @@
 
 @layer base {
   :root {
-    --background: 48 85% 95%;
-    --foreground: 220 35% 17%;
+    --background: 210 70% 96%;
+    --foreground: 216 44% 16%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 28% 18%;
+    --card-foreground: 216 38% 18%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 28% 18%;
+    --popover-foreground: 216 38% 18%;
 
-    --primary: 24 92% 52%;
+    --primary: 211 90% 47%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 208 85% 83%;
-    --secondary-foreground: 220 30% 18%;
+    --secondary: 210 82% 88%;
+    --secondary-foreground: 216 42% 18%;
 
-    --muted: 49 70% 88%;
-    --muted-foreground: 220 18% 34%;
+    --muted: 210 55% 92%;
+    --muted-foreground: 216 20% 36%;
 
-    --accent: 48 95% 54%;
-    --accent-foreground: 220 30% 16%;
+    --accent: 202 92% 58%;
+    --accent-foreground: 216 42% 16%;
 
     --destructive: 0 72% 48%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 212 34% 81%;
-    --input: 212 34% 81%;
-    --ring: 24 92% 52%;
+    --border: 212 34% 82%;
+    --input: 212 34% 82%;
+    --ring: 211 90% 47%;
 
     --radius: 1rem;
   }
 
   .dark {
-    --background: 220 20% 8%;
+    --background: 220 34% 9%;
     --foreground: 0 0% 98%;
 
-    --card: 222 17% 12%;
+    --card: 220 28% 13%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 222 17% 12%;
+    --popover: 220 28% 13%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 36 88% 56%;
+    --primary: 207 94% 61%;
     --primary-foreground: 0 0% 7%;
 
-    --secondary: 220 14% 19%;
+    --secondary: 220 24% 20%;
     --secondary-foreground: 0 0% 96%;
 
-    --muted: 220 12% 16%;
+    --muted: 220 20% 16%;
     --muted-foreground: 0 0% 72%;
 
-    --accent: 36 88% 56%;
+    --accent: 199 90% 64%;
     --accent-foreground: 0 0% 7%;
 
     --destructive: 0 72% 52%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 220 12% 24%;
-    --input: 220 12% 24%;
-    --ring: 36 88% 56%;
+    --border: 220 18% 24%;
+    --input: 220 18% 24%;
+    --ring: 207 94% 61%;
   }
 }
 
@@ -74,12 +74,12 @@
     @apply bg-background text-foreground;
     font-family: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
     background-image:
-      linear-gradient(45deg, rgba(22, 89, 170, 0.06) 25%, transparent 25%),
-      linear-gradient(-45deg, rgba(239, 112, 35, 0.07) 25%, transparent 25%),
-      linear-gradient(45deg, transparent 75%, rgba(251, 203, 38, 0.11) 75%),
-      linear-gradient(-45deg, transparent 75%, rgba(75, 158, 227, 0.1) 75%),
-      radial-gradient(circle at 85% 5%, rgba(242, 124, 32, 0.2), transparent 36%),
-      radial-gradient(circle at 10% 90%, rgba(252, 211, 47, 0.18), transparent 36%);
+      linear-gradient(45deg, rgba(16, 83, 168, 0.07) 25%, transparent 25%),
+      linear-gradient(-45deg, rgba(42, 123, 216, 0.07) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, rgba(108, 178, 245, 0.12) 75%),
+      linear-gradient(-45deg, transparent 75%, rgba(28, 100, 184, 0.09) 75%),
+      radial-gradient(circle at 85% 5%, rgba(49, 128, 226, 0.22), transparent 36%),
+      radial-gradient(circle at 10% 90%, rgba(99, 179, 237, 0.18), transparent 36%);
     background-size: 32px 32px, 32px 32px, 32px 32px, 32px 32px, 100% 100%, 100% 100%;
     background-position: 0 0, 0 16px, 16px -16px, -16px 0, center, center;
   }
@@ -88,8 +88,8 @@
     background-image:
       linear-gradient(45deg, rgba(255, 255, 255, 0.03) 25%, transparent 25%),
       linear-gradient(-45deg, rgba(255, 255, 255, 0.03) 25%, transparent 25%),
-      radial-gradient(circle at 85% 5%, rgba(244, 179, 43, 0.18), transparent 38%),
-      radial-gradient(circle at 10% 90%, rgba(255, 88, 51, 0.14), transparent 38%);
+      radial-gradient(circle at 85% 5%, rgba(72, 160, 255, 0.2), transparent 38%),
+      radial-gradient(circle at 10% 90%, rgba(43, 124, 216, 0.16), transparent 38%);
     background-size: 36px 36px, 36px 36px, 100% 100%, 100% 100%;
     background-position: 0 0, 0 18px, center, center;
   }
