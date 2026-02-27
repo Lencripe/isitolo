@@ -33,9 +33,7 @@ export function OrderTrackingPage() {
       return
     }
 
-    return () => {
-      clearStoredCart()
-    }
+    clearStoredCart()
   }, [signature])
 
 
