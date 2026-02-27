@@ -1,6 +1,6 @@
-# Istolo - On-Demand Printing with Solana Blockchain
+# Istolo 
 
-A modern, full-featured web application for on-demand printing services (metal prints, paper prints, canvas, and merchandise) powered by the Solana blockchain for fast, transparent payments.
+Your one-stop shop for creation, verification and distribution of phygitals/goods on the Solana Blockchain
 
 ## Features
 
