@@ -98,57 +98,7 @@ The application uses Solana on Devnet by default for testing. Key components:
 - RPC Endpoint: Default Solana cluster RPC
 - Auto-connect: Enabled for returning users
 
-### Payment Processing
-Ready for Solana Pay integration for quick checkouts:
-- SPL Token payments
-- Direct SOL transfers
-- Invoice system support
 
-## Digital Product Passport (DPP) MVP
-
-The checkout flow now issues a digital product passport certificate after a successful payment and displays it on the order tracking page.
-
-### Current MVP Behavior
-- Certificate payload includes expanded DPP fields (materials, origin, certifications, repairability, recycled content, and payment reference).
-- Metadata is generated as JSON, hashed with SHA-256, and exposed as a URI.
-- Certificate is persisted locally for recovery if route state is lost.
-- On-chain minting toggle exists in `src/config/solana.ts` under `SOLANA_CONFIG.PASSPORT.ENABLE_ONCHAIN_MINT`.
-
-### NFC (Deferred) Implementation Blueprint
-
-NFC read/write is intentionally deferred for this phase. Use this blueprint for the next phase:
-
-1. **Target platform**
-  - Launch support: Android Chromium browsers with Web NFC (`NDEFReader`).
-  - Non-supported devices (iOS/desktop): fallback to QR with the same payload URL.
-
-2. **NFC payload format**
-  - Prefer a compact URL containing certificate reference:
-    - `https://your-app-domain/passport/{certificateId}`
-  - Optional advanced payload fields:
-    - `mintAddress`, `metadataUri`, `metadataHash`, `version`.
-
-3. **Write flow (initial provisioning)**
-  - Mint/issue passport certificate after payment.
-  - Operator taps “Write NFC Tag”.
-  - Browser prompts NFC permission.
-  - Write NDEF text/URL record with the certificate link.
-  - Save write timestamp + tag UID hash in backend audit log.
-
-4. **Read flow (verification)**
-  - Tap “Scan NFC Tag”.
-  - Decode NDEF record and open passport verification route.
-  - Validate hash, payment signature, and mint/explorer references.
-
-5. **Files to add in next phase**
-  - `src/lib/nfc.ts` for Web NFC wrappers.
-  - `src/components/NfcPassportPanel.tsx` for read/write UI.
-  - `src/pages/PassportVerifyPage.tsx` for verification rendering.
-
-6. **Security and compliance notes**
-  - Never store secrets/private keys on NFC tags.
-  - Store references only; fetch full data from trusted endpoint.
-  - Version schema and keep immutable audit fields for DPP traceability.
 
 ## Customization
 
