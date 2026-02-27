@@ -1,17 +1,22 @@
-# Istolo 
+# Istolo (Working In Progress👷🏾‍♂️)
 
 Your one-stop shop for creation, verification and distribution of phygitals/goods on the Solana Blockchain
 
 ## Features
 
-✨ **Core Features**
-- **Metal & Paper Prints**: High-quality photo printing on multiple surfaces
-- **Solana Integration**: Blockchain-powered payments via Solana wallet
+✨ **Implemented Features**
+
+- **Solana Integration**: Payments and wallet connection with Solana Web3.js 
 - **Fast Checkout**: Payments process in seconds with Solana
 - **Merchandise**: T-shirts, hoodies, and custom apparel
 - **Responsive Design**: Mobile-first design with Tailwind CSS
-- **Modern UI**: Built with shadcn components and Lucide icons
+- **Modern UI**: 
 
+🔮 **Future Features**
+- **Digital Product Passport (DPP)**: Issue digital certificates with product details and payment proof stored on arweave or on-chain.
+- **NFC Support**: Read/write DPP certificates to NFC tags for physical product authentication
+- **Seller flow**: Allow users to create and manage their own product listings and sales.
+- 
 ## Tech Stack
 
 - **Frontend Framework**: React 19 with TypeScript
@@ -20,9 +25,9 @@ Your one-stop shop for creation, verification and distribution of phygitals/good
 - **Blockchain**: Solana Web3.js with wallet adapters
 - **Wallets Supported**: 
   - Phantom
-  - Solflare
-  - Torus
-
+  - Backpack
+- **UI**:Built with shadcn components and Lucide icons
+  
 ## Project Structure
 
 ```
