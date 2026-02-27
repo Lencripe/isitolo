@@ -7,10 +7,8 @@ Your one-stop shop for creation, verification and distribution of phygitals/good
 ✨ **Implemented Features**
 
 - **Solana Integration**: Payments and wallet connection with Solana Web3.js 
-- **Fast Checkout**: Payments process in seconds with Solana
-- **Merchandise**: T-shirts, hoodies, and custom apparel
-- **Responsive Design**: Mobile-first design with Tailwind CSS
-- **Modern UI**: 
+-**minting DPP certificates**: Generate digital product passports with detailed metadata(which will be stored on arweave) after purchase.
+-
 
 🔮 **Future Features**
 - **Digital Product Passport (DPP)**: Issue digital certificates with product details and payment proof stored on arweave or on-chain.
