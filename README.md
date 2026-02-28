@@ -9,14 +9,14 @@ Your one-stop shop for creation, verification and distribution of phygitals/good
 - **Solana Integration**: Payments and wallet connection with Solana Web3.js 
 -**Minting DPP certificates**: Generate digital product passports with detailed metadata(which will be stored on arweave soon) after purchase.
 -**Merch Drop**: Allows creators to list items as NFT collections
--**Setup privy.io**:Use this to manage wallet infrastucture.
-
 
 🔮 **Future Features**
+
 - **Digital Product Passport (DPP)**: Issue digital certificates with product details and payment proof stored on arweave or on-chain.
 - **NFC Support**: Read/write DPP certificates to NFC tags for physical product authentication
 - **Seller flow**: Allow users to create and manage their own product listings and sales.
-- 
+-**Setup privy.io**:Use this to manage wallet infrastucture.
+
 ## Tech Stack
 
 - **Frontend Framework**: React 19 with TypeScript
