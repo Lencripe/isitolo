@@ -144,36 +144,14 @@ VITE_DPP_POINTER_ENDPOINT=
 VITE_DPP_POINTER_WALLET=
 ```
 
-### DPP Mode Quick Examples
-
+### Digital Product Passport Mode Quick Examples
+This is still currently a work in progress, but you can configure the DPP storage pipeline with different modes:
 - **Local/dev fallback only**: set `VITE_DPP_STORAGE_MODE=mock`
 - **Arweave only**: set `VITE_DPP_STORAGE_MODE=arweave` and `VITE_ARWEAVE_UPLOAD_ENDPOINT`
 - **On-chain pointer only**: set `VITE_DPP_STORAGE_MODE=onchain` and `VITE_DPP_POINTER_ENDPOINT`
 - **Hybrid**: set `VITE_DPP_STORAGE_MODE=hybrid` with both upload and pointer endpoints
 
-## Next Steps
 
-1. **Backend Setup**: Create API endpoints for:
-   - Product management
-   - Order processing
-   - Payment verification
-   - Shipping integration
-
-2. **Database**: Set up PostgreSQL/MongoDB for:
-   - User profiles
-   - Order history
-   - Product catalog
-   - Artwork metadata
-
-3. **Web3 Features**:
-   - Program-based payment escrow
-   - NFT creation for purchases
-   - DAO governance for platform decisions
-
-4. **Smart Contracts**: Develop Solana programs for:
-   - Payment processing
-   - Order verification
-   - NFT minting
 
 ## Scripts
 
@@ -209,10 +187,6 @@ npm install -g vercel
 vercel
 ```
 
-### Other Platforms
-- **Netlify**: Connect GitHub repo, build command: `npm run build`
-- **GitHub Pages**: Configure in repository settings
-- **AWS Amplify**: Connect repo and configure build settings
 
 ## Resources
 
@@ -222,14 +196,5 @@ vercel
 - [Tailwind CSS](https://tailwindcss.com)
 - [React Documentation](https://react.dev)
 - [Vite Documentation](https://vitejs.dev)
+- [Solana Skill](https://solana.com/SKILL.md)
 
-## License
-
-MIT
-
-## Support
-
-For issues and questions:
-- GitHub Issues
-- Discord Community
-- Email: support@istolo.com
