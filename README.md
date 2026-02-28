@@ -7,8 +7,9 @@ Your one-stop shop for creation, verification and distribution of phygitals/good
 ✨ **Implemented Features**
 
 - **Solana Integration**: Payments and wallet connection with Solana Web3.js 
--**minting DPP certificates**: Generate digital product passports with detailed metadata(which will be stored on arweave) after purchase.
--
+-**Minting DPP certificates**: Generate digital product passports with detailed metadata(which will be stored on arweave soon) after purchase.
+-**Merch Drop**: Allows creators to list items as NFT collections
+
 
 🔮 **Future Features**
 - **Digital Product Passport (DPP)**: Issue digital certificates with product details and payment proof stored on arweave or on-chain.
