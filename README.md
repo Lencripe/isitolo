@@ -9,6 +9,7 @@ Your one-stop shop for creation, verification and distribution of phygitals/good
 - **Solana Integration**: Payments and wallet connection with Solana Web3.js 
 -**Minting DPP certificates**: Generate digital product passports with detailed metadata(which will be stored on arweave soon) after purchase.
 -**Merch Drop**: Allows creators to list items as NFT collections
+-**Setup privy.io**:Use this to manage wallet infrastucture.
 
 
 🔮 **Future Features**
@@ -58,7 +59,7 @@ src/
 ### Prerequisites
 - Node.js 16+
 - npm or yarn
-- A Solana wallet (Phantom, Solflare, or Torus)
+- A Solana wallet (Phantom, Solflare, or Backpack) for testing payments and minting
 
 ### Installation
 
