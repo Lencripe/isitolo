@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
+import { Analytics } from '@vercel/analytics/react'
 import { LandingPage } from './pages/LandingPage'
 import { ShopPage } from './pages/ShopPage'
 import { CheckoutPage } from './pages/CheckoutPage'
@@ -40,6 +41,7 @@ function App() {
     <Router>
       <Header />
       <AnimatedRoutes />
+      <Analytics />
     </Router>
   )
 }
