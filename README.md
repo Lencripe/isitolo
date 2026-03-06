@@ -100,6 +100,12 @@ The application uses Solana on Devnet by default for testing. Key components:
 - RPC Endpoint: Default Solana cluster RPC
 - Auto-connect: Enabled for returning users
 
+### Digital Product Passport Mode Quick Examples
+This is still currently a work in progress, but you can configure the DPP storage pipeline with different modes:
+- **Local/dev fallback only**: set `VITE_DPP_STORAGE_MODE=mock`
+- **Arweave only**: set `VITE_DPP_STORAGE_MODE=arweave` and `VITE_ARWEAVE_UPLOAD_ENDPOINT`
+- **On-chain pointer only**: set `VITE_DPP_STORAGE_MODE=onchain` and `VITE_DPP_POINTER_ENDPOINT`
+- **Hybrid**: set `VITE_DPP_STORAGE_MODE=hybrid` with both upload and pointer endpoints
 
 
 ## Customization
@@ -146,12 +152,6 @@ VITE_DPP_POINTER_ENDPOINT=
 VITE_DPP_POINTER_WALLET=
 ```
 
-### Digital Product Passport Mode Quick Examples
-This is still currently a work in progress, but you can configure the DPP storage pipeline with different modes:
-- **Local/dev fallback only**: set `VITE_DPP_STORAGE_MODE=mock`
-- **Arweave only**: set `VITE_DPP_STORAGE_MODE=arweave` and `VITE_ARWEAVE_UPLOAD_ENDPOINT`
-- **On-chain pointer only**: set `VITE_DPP_STORAGE_MODE=onchain` and `VITE_DPP_POINTER_ENDPOINT`
-- **Hybrid**: set `VITE_DPP_STORAGE_MODE=hybrid` with both upload and pointer endpoints
 
 
 
