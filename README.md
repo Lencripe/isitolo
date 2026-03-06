@@ -1,4 +1,4 @@
-# Istolo (Working In Progress👷🏾‍♂️)
+# Istolo (Work In Progress👷🏾‍♂️)
 
 Your one-stop shop for creation, verification and distribution of phygitals/goods on the Solana Blockchain
 
