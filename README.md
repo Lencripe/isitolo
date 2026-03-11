@@ -150,6 +150,17 @@ VITE_ARWEAVE_UPLOAD_ENDPOINT=
 # Used for onchain/hybrid mode
 VITE_DPP_POINTER_ENDPOINT=
 VITE_DPP_POINTER_WALLET=
+
+# Escrow API base URL
+# On Vercel: set to /api  (uses the built-in serverless functions)
+# Locally:   set to http://localhost:8787
+# Leave blank to disable escrow and fall back to local state
+VITE_ESCROW_API_BASE_URL=
+
+# Escrow config (only needed when using the API)
+VITE_ESCROW_VAULT_WALLET=
+VITE_ESCROW_RELEASE_TIMEOUT_HOURS=72
+VITE_ESCROW_DISPUTE_WINDOW_HOURS=168
 ```
 
 
@@ -184,10 +195,24 @@ npm run dev
 ## Deployment
 
 ### Vercel (Recommended)
+
+The project ships a `vercel.json` that configures the Vite build and SPA routing. The escrow API scaffold is exposed as Vercel serverless functions under `api/`, so no separate service is needed for testing.
+
 ```bash
 npm install -g vercel
 vercel
 ```
+
+#### Environment variables to set in the Vercel dashboard
+
+| Variable | Value for Vercel | Notes |
+|---|---|---|
+| `VITE_ESCROW_API_BASE_URL` | `/api` | Points the frontend at the built-in serverless functions |
+| `ESCROW_MERCHANT_WALLET` | `<your wallet>` | Merchant wallet address (server-side) |
+| `ESCROW_VAULT_WALLET` | `<vault wallet>` | Escrow vault wallet address (server-side) |
+| `VITE_PUBLIC_APP_URL` | `https://<your-vercel-domain>` | Used in generated metadata links |
+
+> **Note:** The escrow API serverless functions use in-memory storage, which is suitable for testing only. Data does not persist across cold-starts. Replace with a persistent store (e.g. Upstash Redis or Postgres) for production.
 
 
 ## Resources

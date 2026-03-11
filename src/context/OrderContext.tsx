@@ -11,8 +11,8 @@ interface OrderContextType {
   clearCart: () => void
   getCartTotal: () => number
   getCartTotalSOL: () => number
-  createOrder: (shippingAddress: ShippingAddress) => Order
-  updateOrderStatus: (orderId: string, status: Order['status']) => void
+  createOrder: (shippingAddress: ShippingAddress, userId?: string) => Order
+  updateOrderStatus: (orderId: string, status: Order['status'], paymentSignature?: string) => void
   getOrderById: (orderId: string) => Order | undefined
   getAllOrders: () => Order[]
 }
@@ -118,10 +118,10 @@ export function OrderProvider({ children }: { children: ReactNode }) {
   }, [getCartTotal])
 
   const createOrder = useCallback(
-    (shippingAddress: ShippingAddress): Order => {
+    (shippingAddress: ShippingAddress, userId = ''): Order => {
       const order: Order = {
         id: `order_${Date.now()}`,
-        userId: '', // Will be set to wallet address
+        userId,
         items: [...cart],
         totalPrice: getCartTotal(),
         totalSOL: getCartTotalSOL(),
@@ -138,13 +138,14 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     [cart, getCartTotal, getCartTotalSOL, clearCart]
   )
 
-  const updateOrderStatus = useCallback((orderId: string, status: Order['status']) => {
+  const updateOrderStatus = useCallback((orderId: string, status: Order['status'], paymentSignature?: string) => {
     setOrders((prevOrders) =>
       prevOrders.map((order) =>
         order.id === orderId
           ? {
               ...order,
               status,
+              ...(paymentSignature !== undefined ? { paymentSignature } : {}),
               updatedAt: new Date(),
             }
           : order
