@@ -142,10 +142,11 @@ export async function sendUSDCTransferTransaction(
     console.log(`📤 Transaction sent: ${signature}`)
 
     // Wait for confirmation
+    const latestBlockhash = await connection.getLatestBlockhash()
     const confirmation = await connection.confirmTransaction({
       signature,
-      blockhash: (await connection.getLatestBlockhash()).blockhash,
-      lastValidBlockHeight: (await connection.getLatestBlockhash()).lastValidBlockHeight,
+      blockhash: latestBlockhash.blockhash,
+      lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
     })
 
     if (confirmation.value.err) {

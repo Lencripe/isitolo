@@ -34,13 +34,14 @@ function OrderTimeline({ status }: OrderTimelineProps) {
     icon: React.ReactNode
   }> = [
     { key: 'pending', label: 'Payment Pending', icon: <Clock className="w-5 h-5" /> },
+    { key: 'processing', label: 'Processing', icon: <Clock className="w-5 h-5" /> },
     { key: 'confirmed', label: 'Order Confirmed', icon: <CheckCircle className="w-5 h-5" /> },
     { key: 'printing', label: 'Printing', icon: <Printer className="w-5 h-5" /> },
     { key: 'shipped', label: 'Shipped', icon: <Truck className="w-5 h-5" /> },
     { key: 'delivered', label: 'Delivered', icon: <Package className="w-5 h-5" /> },
   ]
 
-  const statusOrder = ['pending', 'confirmed', 'printing', 'shipped', 'delivered']
+  const statusOrder = ['pending', 'processing', 'confirmed', 'printing', 'shipped', 'delivered']
   const currentIndex = statusOrder.indexOf(status)
 
   return (

@@ -14,7 +14,7 @@ interface CheckoutFormProps {
 
 export function CheckoutForm({ onPaymentSuccess, onPaymentError }: CheckoutFormProps) {
   const { publicKey } = useWallet()
-  const { cart, createOrder, getCartTotal, getCartTotalSOL } = useOrder()
+  const { cart, createOrder, updateOrderStatus, getCartTotal, getCartTotalSOL } = useOrder()
   const [isProcessing, setIsProcessing] = useState(false)
   const [formData, setFormData] = useState<ShippingAddress>({
     fullName: '',
@@ -70,9 +70,8 @@ export function CheckoutForm({ onPaymentSuccess, onPaymentError }: CheckoutFormP
     setIsProcessing(true)
 
     try {
-      // Create order
-      const order = createOrder(formData)
-      order.userId = publicKey!.toBase58()
+      // Create order with the wallet address as userId
+      const order = createOrder(formData, publicKey!.toBase58())
 
       // Here you would integrate with actual Solana Pay
       // For now, we'll simulate the payment
@@ -83,8 +82,8 @@ export function CheckoutForm({ onPaymentSuccess, onPaymentError }: CheckoutFormP
       await new Promise((resolve) => setTimeout(resolve, 1500))
 
       // In production, verify payment here
-      order.status = 'confirmed'
-      order.paymentSignature = `tx_${Date.now()}_mock`
+      const paymentSignature = `tx_${Date.now()}_mock`
+      updateOrderStatus(order.id, 'confirmed', paymentSignature)
 
       onPaymentSuccess?.(order.id)
     } catch (error) {
