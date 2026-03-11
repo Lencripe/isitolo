@@ -26,7 +26,7 @@ export async function createSolTransfer(
 ): Promise<Transaction> {
   const transaction = new Transaction()
 
-  const lamports = amountSOL * LAMPORTS_PER_SOL
+  const lamports = Math.round(amountSOL * LAMPORTS_PER_SOL)
 
   transaction.add(
     SystemProgram.transfer({
