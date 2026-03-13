@@ -114,6 +114,7 @@ export async function createUSDCTransferTransaction(
  */
 export async function sendUSDCTransferTransaction(
   connection: Connection,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   signedTransaction: any
 ): Promise<string> {
   try {

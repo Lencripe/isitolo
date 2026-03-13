@@ -156,14 +156,17 @@ export function CheckoutPage() {
       // Match the provider to the wallet that's actually connected
       // Check the v1.0 wallet address against available providers
       const v1Address = wallet.account.address.toString()
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let provider: any = null
       
       // Check all available wallet providers and match by public key
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const win = window as any
       const availableProviders = [
-        { name: 'Backpack', provider: (window as any).backpack },
-        { name: 'Phantom', provider: (window as any).solana },
-        { name: 'Solflare', provider: (window as any).solflare },
-        { name: 'Coinbase', provider: (window as any).coinbaseSolana },
+        { name: 'Backpack', provider: win.backpack },
+        { name: 'Phantom', provider: win.solana },
+        { name: 'Solflare', provider: win.solflare },
+        { name: 'Coinbase', provider: win.coinbaseSolana },
       ]
       
       for (const { name, provider: p } of availableProviders) {
@@ -198,8 +201,8 @@ export function CheckoutPage() {
         console.log('🔌 Requesting wallet provider connection...')
         try {
           await provider.connect()
-        } catch (connectErr: any) {
-          throw new Error(`Failed to connect to wallet: ${connectErr.message}`)
+        } catch (connectErr) {
+          throw new Error(`Failed to connect to wallet: ${(connectErr as Error).message}`)
         }
       }
 
@@ -285,9 +288,9 @@ export function CheckoutPage() {
           },
         })
       }, 2000)
-    } catch (err: any) {
+    } catch (err) {
       console.error('❌ Payment error:', err)
-      setError(err.message || 'Payment failed. Please try again.')
+      setError((err as Error).message || 'Payment failed. Please try again.')
     } finally {
       setLoading(false)
     }

@@ -28,7 +28,7 @@ export function CartSummary() {
             <div className="flex-1">
               <p className="font-semibold">{item.product.name}</p>
               <p className="text-sm text-muted-foreground">
-                {Object.entries(item.selectedOptions).map(([_key, value]) => `${value}`).join(', ')}
+                {Object.entries(item.selectedOptions).map(([, value]) => `${value}`).join(', ')}
               </p>
               <p className="text-sm font-medium mt-1">{formatUsd(item.itemPrice)}</p>
             </div>

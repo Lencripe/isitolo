@@ -107,11 +107,13 @@ export function CreatorCollectionPage() {
   }
 
   const resolveWalletSignerProvider = (walletAddress: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const win = window as any
     const availableProviders = [
-      (window as any).backpack,
-      (window as any).solana,
-      (window as any).solflare,
-      (window as any).coinbaseSolana,
+      win.backpack,
+      win.solana,
+      win.solflare,
+      win.coinbaseSolana,
     ]
 
     return (
@@ -153,11 +155,11 @@ export function CreatorCollectionPage() {
       setSavedCollections(next)
       saveCreatorCollections(next)
       setMessage(`Collection removed from website and chain. Tx: ${signature}`)
-    } catch (error: any) {
+    } catch (error) {
       setSavedCollections(localNext)
       saveCreatorCollections(localNext)
       setMessage(
-        `On-chain removal failed, removed locally instead: ${error?.message || 'Unknown error'}`
+        `On-chain removal failed, removed locally instead: ${(error as Error)?.message || 'Unknown error'}`
       )
     }
   }
@@ -225,12 +227,12 @@ export function CreatorCollectionPage() {
       setRoyaltyBps(500)
       setItems([])
       setMessage(`Collection saved on-chain. Tx: ${signature}`)
-    } catch (error: any) {
+    } catch (error) {
       const fallback = [collection, ...savedCollections]
       saveCreatorCollections(fallback)
       setSavedCollections(fallback)
       setMessage(
-        `On-chain save failed, stored locally instead: ${error?.message || 'Unknown error'}`
+        `On-chain save failed, stored locally instead: ${(error as Error)?.message || 'Unknown error'}`
       )
     }
   }

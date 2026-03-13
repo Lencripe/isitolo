@@ -76,4 +76,15 @@ export default defineConfig({
       },
     },
   },
+  test: {
+    environment: 'jsdom',
+    setupFiles: './src/test/setup.ts',
+    include: ['src/**/*.test.ts'],
+    clearMocks: true,
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html'],
+      exclude: ['src/test/**', 'src/shims/**', 'src/types/**'],
+    },
+  },
 })
