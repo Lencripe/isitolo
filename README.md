@@ -6,16 +6,22 @@ Your one-stop shop for creation, verification and distribution of phygitals/good
 
 ✨ **Implemented Features**
 
-- **Solana Integration**: Payments and wallet connection with Solana Web3.js 
--**Minting DPP certificates**: Generate digital product passports with detailed metadata(which will be stored on arweave soon) after purchase.
--**Merch Drop**: Allows creators to list items as NFT collections
+- **Solana Integration**: Payments and wallet connection with Solana Web3.js
+- **USDC Payments**: Accept USDC at checkout via SPL token transfers
+- **Shopping Cart**: Persistent cart with localStorage, quantity management and checkout flow
+- **Digital Product Passport (DPP)**: Issue digital certificates with detailed metadata (materials, certifications, repairability score, country of origin) stored via configurable pipeline (mock, Arweave, on-chain pointer, or hybrid)
+- **NFT Minting**: Mint DPP certificates as on-chain NFTs using Metaplex token metadata; supports direct mint and Candy Machine strategies
+- **Passport Verification**: Cryptographic signature verification of DPP certificates with QR code generation for easy sharing
+- **Merch Drop / Creator Collections**: Creators can list items as NFT collections; supports on-chain storage via an Anchor program with local fallback
+- **Rewards / Loyalty Points**: Earn points per USDC spent and redeem them for discounts at checkout
+- **Escrow Payment Protection**: Orders are held in escrow with configurable auto-release timeout, buyer confirmation, dispute opening, and admin refund flows
+- **Dark / Light Mode**: Theme toggle with system preference support
 
 🔮 **Future Features**
 
-- **Digital Product Passport (DPP)**: Issue digital certificates with product details and payment proof stored on arweave or on-chain.
 - **NFC Support**: Read/write DPP certificates to NFC tags for physical product authentication
-- **Seller flow**: Allow users to create and manage their own product listings and sales.
--**Setup privy.io**:Use this to manage wallet infrastucture.
+- **Seller flow**: Allow users to create and manage their own product listings and sales
+- **Setup privy.io**: Use this to manage wallet infrastructure
 
 ## Tech Stack
 
@@ -23,10 +29,12 @@ Your one-stop shop for creation, verification and distribution of phygitals/good
 - **Build Tool**: Vite 7
 - **Styling**: Tailwind CSS 3 with shadcn components
 - **Blockchain**: Solana Web3.js with wallet adapters
+- **NFT Metadata**: Metaplex Token Metadata program
 - **Wallets Supported**: 
   - Phantom
   - Backpack
-- **UI**:Built with shadcn components and Lucide icons
+  - Solflare
+- **UI**: Built with shadcn components and Lucide icons
   
 ## Project Structure
 
@@ -35,23 +43,53 @@ src/
 ├── components/          # Reusable UI components
 │   ├── Button.tsx
 │   ├── Card.tsx
+│   ├── CartSummary.tsx
+│   ├── CheckoutForm.tsx
+│   ├── CtaSection.tsx
+│   ├── FeaturesSection.tsx
+│   ├── Footer.tsx
 │   ├── Header.tsx
 │   ├── HeroSection.tsx
-│   ├── FeaturesSection.tsx
+│   ├── OrderDetails.tsx
+│   ├── ProductPassportCard.tsx
+│   ├── ProductShowcase.tsx
 │   ├── ProductsSection.tsx
-│   ├── CtaSection.tsx
-│   ├── Footer.tsx
+│   ├── ThemeToggle.tsx
+│   ├── WalletButton.tsx
 │   └── index.ts
+├── config/             # App configuration
+│   └── solana.ts
+├── context/            # React context providers
+│   ├── OrderContext.tsx
+│   └── SolanaProvider.tsx
+├── lib/                # Utility functions & business logic
+│   ├── cart.ts
+│   ├── constants.ts
+│   ├── creator-collections.ts
+│   ├── dpp-storage.ts
+│   ├── drop-mint-stats.ts
+│   ├── escrow-api.ts
+│   ├── escrow.ts
+│   ├── home-products.ts
+│   ├── passport-metadata.ts
+│   ├── passport-mint.ts
+│   ├── payment-utils.ts
+│   ├── rewards.ts
+│   ├── shop-products.ts
+│   ├── usdc-transfer.ts
+│   ├── utils.ts
+│   └── verification.ts
 ├── pages/              # Page components
 │   └── LandingPage.tsx
-├── context/            # React context providers
-│   └── SolanaProvider.tsx
-├── lib/                # Utility functions
-│   └── utils.ts
+├── types/              # TypeScript type definitions
+│   ├── escrow.ts
+│   ├── index.ts
+│   └── passport.ts
 ├── App.tsx             # Main app component
 ├── App.css             # Tailwind styles
 ├── index.css           # Global styles
-└── main.tsx            # Entry point
+├── main.tsx            # Entry point
+└── providers.tsx       # Global providers wrapper
 ```
 
 ## Getting Started
@@ -150,6 +188,18 @@ VITE_ARWEAVE_UPLOAD_ENDPOINT=
 # Used for onchain/hybrid mode
 VITE_DPP_POINTER_ENDPOINT=
 VITE_DPP_POINTER_WALLET=
+
+# Escrow
+VITE_ESCROW_API_BASE_URL=
+VITE_ESCROW_VAULT_WALLET=
+VITE_ESCROW_ADMIN_WALLET=
+VITE_ESCROW_RELEASE_TIMEOUT_HOURS=72
+VITE_ESCROW_DISPUTE_WINDOW_HOURS=168
+
+# Creator Collections on-chain program (optional)
+VITE_COLLECTIONS_PROGRAM_ID=
+VITE_COLLECTIONS_ONCHAIN_ENABLED=true
+VITE_COLLECTIONS_FALLBACK_TO_LOCAL=true
 ```
 
 
