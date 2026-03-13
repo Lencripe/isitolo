@@ -27,6 +27,12 @@ interface OrderTimelineProps {
   status: Order['status']
 }
 
+/**
+ * Renders a vertical order timeline showing each step's label and icon with visual states for completed and current steps.
+ *
+ * @param status - The order's current status used to determine which steps are completed and which step is in progress.
+ * @returns The rendered timeline element containing all steps with appropriate completion and current-state styling.
+ */
 function OrderTimeline({ status }: OrderTimelineProps) {
   const steps: Array<{
     key: Order['status']
@@ -34,13 +40,14 @@ function OrderTimeline({ status }: OrderTimelineProps) {
     icon: React.ReactNode
   }> = [
     { key: 'pending', label: 'Payment Pending', icon: <Clock className="w-5 h-5" /> },
+    { key: 'processing', label: 'Processing', icon: <Clock className="w-5 h-5" /> },
     { key: 'confirmed', label: 'Order Confirmed', icon: <CheckCircle className="w-5 h-5" /> },
     { key: 'printing', label: 'Printing', icon: <Printer className="w-5 h-5" /> },
     { key: 'shipped', label: 'Shipped', icon: <Truck className="w-5 h-5" /> },
     { key: 'delivered', label: 'Delivered', icon: <Package className="w-5 h-5" /> },
   ]
 
-  const statusOrder = ['pending', 'confirmed', 'printing', 'shipped', 'delivered']
+  const statusOrder = ['pending', 'processing', 'confirmed', 'printing', 'shipped', 'delivered']
   const currentIndex = statusOrder.indexOf(status)
 
   return (

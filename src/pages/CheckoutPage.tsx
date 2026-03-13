@@ -26,6 +26,11 @@ import {
   getRewardsBalance,
 } from '../lib/rewards'
 
+/**
+ * Render the checkout page UI and orchestrate cart management, balance checks, USDC payment (escrow), rewards redemption, product passport issuance, and post-purchase navigation.
+ *
+ * @returns The React element for the checkout page, including order summary, payment controls, reward controls, wallet/balance status, and success/error states.
+ */
 export function CheckoutPage() {
   const location = useLocation()
   const navigate = useNavigate()
@@ -141,15 +146,17 @@ export function CheckoutPage() {
       })
       setEscrowOrderId(escrowOrder.id)
 
-      const transaction = await createUSDCTransferTransaction(
+      const txBundle = await createUSDCTransferTransaction(
         wallet.account.address.toString(),
         payableTotal,
         SOLANA_CONFIG.ESCROW.VAULT_WALLET
       )
 
-      if (!transaction) {
+      if (!txBundle) {
         throw new Error('Failed to create transaction')
       }
+
+      const { transaction, blockhash, lastValidBlockHeight } = txBundle
 
       console.log('📝 Transaction created, waiting for wallet signature...')
 
@@ -222,7 +229,8 @@ export function CheckoutPage() {
       const connection = new Connection(SOLANA_CONFIG.RPC_ENDPOINT, 'confirmed')
       const signature = await sendUSDCTransferTransaction(
         connection,
-        signedTransaction
+        signedTransaction,
+        { blockhash, lastValidBlockHeight }
       )
 
       markEscrowOrderFunded(escrowOrder.id, signature)
