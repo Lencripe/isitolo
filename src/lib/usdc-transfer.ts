@@ -19,17 +19,18 @@ import {
 import { SOLANA_CONFIG, validateMerchantWallet } from '../config/solana'
 
 /**
- * Create a USDC transfer transaction
- * 
+ * Creates a USDC transfer transaction from a payer to a recipient.
+ *
  * @param payerAddress - The wallet address sending USDC
- * @param amount - Amount in USDC (will be converted to smallest unit using decimals)
- * @returns Transaction object ready to be signed
+ * @param amount - Amount in USDC (decimal units; will be converted to the token's smallest unit)
+ * @param recipientWalletAddress - Destination wallet address; defaults to the configured merchant wallet
+ * @returns An object with `transaction` (the prepared Transaction with recentBlockhash and feePayer set), `blockhash` (the recent blockhash used), and `lastValidBlockHeight` (the block height after which the transaction is expired)
  */
 export async function createUSDCTransferTransaction(
   payerAddress: string,
   amount: number,
   recipientWalletAddress: string = SOLANA_CONFIG.MERCHANT_WALLET
-): Promise<Transaction | null> {
+): Promise<{ transaction: Transaction; blockhash: string; lastValidBlockHeight: number } | null> {
   // Validate merchant wallet is configured
   if (!validateMerchantWallet()) {
     throw new Error(`Merchant wallet not configured. Update src/config/solana.ts  ${SOLANA_CONFIG.MERCHANT_WALLET}`)
@@ -93,12 +94,13 @@ export async function createUSDCTransferTransaction(
     )
     transaction.add(transferInstruction)
 
-    // Get recent blockhash for transaction
-    const { blockhash } = await connection.getLatestBlockhash()
+    // Get recent blockhash for transaction - capture lastValidBlockHeight so
+    // it can be forwarded to confirmTransaction later (same RPC call, matching pair).
+    const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash()
     transaction.recentBlockhash = blockhash
     transaction.feePayer = payerPublicKey
 
-    return transaction
+    return { transaction, blockhash, lastValidBlockHeight }
   } catch (error) {
     console.error('Error creating USDC transfer transaction:', error)
     throw error
@@ -106,15 +108,17 @@ export async function createUSDCTransferTransaction(
 }
 
 /**
- * Send a signed USDC transfer transaction to the network
- * 
- * @param connection - Solana connection
- * @param signedTransaction - Transaction signed by the user's wallet
- * @returns Transaction signature if successful
+ * Send a signed USDC transfer transaction to the Solana network and await confirmation.
+ *
+ * @param connection - Solana connection used to send and confirm the transaction
+ * @param signedTransaction - Signed transaction in one of: Uint8Array, web3.js Transaction, or an object with `messageBytes`
+ * @param transactionBlockhash - Optional blockhash and `lastValidBlockHeight` that were used when the transaction was created; when provided those values are used for confirmation to preserve the original expiry window
+ * @returns The transaction signature string
  */
 export async function sendUSDCTransferTransaction(
   connection: Connection,
-  signedTransaction: any
+  signedTransaction: any,
+  transactionBlockhash?: { blockhash: string; lastValidBlockHeight: number }
 ): Promise<string> {
   try {
     // Convert to Uint8Array if needed (works in browser)
@@ -141,11 +145,22 @@ export async function sendUSDCTransferTransaction(
 
     console.log(`📤 Transaction sent: ${signature}`)
 
-    // Wait for confirmation
+    // Wait for confirmation using the blockhash that was on the transaction.
+    // Falling back to a fresh getLatestBlockhash() only when the caller did
+    // not supply the original blockhash info (legacy / unknown transaction
+    // formats where we cannot recover recentBlockhash).
+    if (!transactionBlockhash) {
+      console.warn(
+        '⚠️  sendUSDCTransferTransaction: no transactionBlockhash supplied – ' +
+        'fetching a fresh blockhash for confirmation. Pass the blockhash returned ' +
+        'by createUSDCTransferTransaction to ensure accurate expiry tracking.'
+      )
+    }
+    const confirmBlockhash = transactionBlockhash ?? await connection.getLatestBlockhash()
     const confirmation = await connection.confirmTransaction({
       signature,
-      blockhash: (await connection.getLatestBlockhash()).blockhash,
-      lastValidBlockHeight: (await connection.getLatestBlockhash()).lastValidBlockHeight,
+      blockhash: confirmBlockhash.blockhash,
+      lastValidBlockHeight: confirmBlockhash.lastValidBlockHeight,
     })
 
     if (confirmation.value.err) {

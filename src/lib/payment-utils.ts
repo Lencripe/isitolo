@@ -16,7 +16,15 @@ export function solToUsd(solAmount: number, solPrice: number = 200): number {
 }
 
 /**
- * Create a SOL transfer transaction
+ * Constructs a Transaction that transfers the specified amount of SOL from a sender to a recipient.
+ *
+ * The provided SOL amount is converted to lamports (rounded to the nearest integer) and used in a
+ * SystemProgram.transfer instruction added to the returned Transaction.
+ *
+ * @param amountSOL - Amount of SOL to transfer
+ * @param senderPublicKey - Public key of the sender
+ * @param recipientPublicKey - Public key of the recipient
+ * @returns A Transaction containing a transfer instruction that moves the specified amount (in lamports) from `senderPublicKey` to `recipientPublicKey`
  */
 export async function createSolTransfer(
   _connection: Connection,
@@ -26,7 +34,7 @@ export async function createSolTransfer(
 ): Promise<Transaction> {
   const transaction = new Transaction()
 
-  const lamports = amountSOL * LAMPORTS_PER_SOL
+  const lamports = Math.round(amountSOL * LAMPORTS_PER_SOL)
 
   transaction.add(
     SystemProgram.transfer({

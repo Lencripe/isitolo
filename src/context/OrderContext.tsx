@@ -11,14 +11,24 @@ interface OrderContextType {
   clearCart: () => void
   getCartTotal: () => number
   getCartTotalSOL: () => number
-  createOrder: (shippingAddress: ShippingAddress) => Order
-  updateOrderStatus: (orderId: string, status: Order['status']) => void
+  createOrder: (shippingAddress: ShippingAddress, userId?: string) => Order
+  updateOrderStatus: (orderId: string, status: Order['status'], paymentSignature?: string) => void
   getOrderById: (orderId: string) => Order | undefined
   getAllOrders: () => Order[]
 }
 
 const OrderContext = createContext<OrderContextType | undefined>(undefined)
 
+/**
+ * Provides cart and order state plus operations to descendant components via OrderContext.
+ *
+ * Exposes a value containing the current `cart` and `orders` arrays and functions to
+ * add, remove, update, and clear cart items; compute totals in USD and SOL; create orders;
+ * update order status (optionally with a payment signature); and retrieve orders by id or all orders.
+ *
+ * @param children - React nodes to be wrapped by the provider
+ * @returns A React element that supplies the OrderContext to its children
+ */
 export function OrderProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([])
   const [orders, setOrders] = useState<Order[]>([])
@@ -118,10 +128,10 @@ export function OrderProvider({ children }: { children: ReactNode }) {
   }, [getCartTotal])
 
   const createOrder = useCallback(
-    (shippingAddress: ShippingAddress): Order => {
+    (shippingAddress: ShippingAddress, userId = ''): Order => {
       const order: Order = {
         id: `order_${Date.now()}`,
-        userId: '', // Will be set to wallet address
+        userId,
         items: [...cart],
         totalPrice: getCartTotal(),
         totalSOL: getCartTotalSOL(),
@@ -138,13 +148,14 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     [cart, getCartTotal, getCartTotalSOL, clearCart]
   )
 
-  const updateOrderStatus = useCallback((orderId: string, status: Order['status']) => {
+  const updateOrderStatus = useCallback((orderId: string, status: Order['status'], paymentSignature?: string) => {
     setOrders((prevOrders) =>
       prevOrders.map((order) =>
         order.id === orderId
           ? {
               ...order,
               status,
+              ...(paymentSignature !== undefined ? { paymentSignature } : {}),
               updatedAt: new Date(),
             }
           : order
